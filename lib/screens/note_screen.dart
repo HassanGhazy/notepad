@@ -1,17 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:notepad/provider/note_procider.dart';
+import 'package:notepad/helper/app_router.dart';
+import 'package:notepad/helper/db_helper.dart';
+import 'package:notepad/models/note.dart';
 
-class AddNote extends StatefulWidget {
+class NoteScreen extends StatefulWidget {
   @override
-  _AddNoteState createState() => _AddNoteState();
+  _NoteScreenState createState() => _NoteScreenState();
 }
 
-class _AddNoteState extends State<AddNote> {
+class _NoteScreenState extends State<NoteScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   final _contentFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
   bool _startWriting = false;
+  List<Note> notesList = [];
+  bool _finishGetData = false;
+  bool _replaceContent = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getNotesData();
+  }
+
+  Future<void> getNotesData() async {
+    await DBHelper.dbhelper.getAllNotes().then((value) => notesList = value);
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -19,31 +35,88 @@ class _AddNoteState extends State<AddNote> {
     super.dispose();
   }
 
-  void _saveNote() {
+  void _saveNote(int id) {
     final isValid = _form.currentState!.validate();
     if (!isValid) {
       return;
     }
+
     _form.currentState!.save();
-    NoteProvider().addNewNote(
-        DateTime.now().toString(),
-        _titleController.text,
-        _contentController.text,
-        DateTime.now().toString(),
-        DateTime.now().toString());
-    Navigator.pop(context);
+    int i = notesList.indexWhere((e) => e.id == id);
+
+    if (i != -1) {
+      // this is a for update a exsit note
+      Note note = Note(
+          id: id,
+          title: _titleController.text,
+          content: _contentController.text,
+          date: DateTime.now().toString());
+      DBHelper.dbhelper.updateNote(note);
+
+      for (int j = i; j > 0; j--) {
+        Note tmpNote = notesList[j];
+        notesList[j] = notesList[j - 1];
+        notesList[j - 1] = tmpNote;
+      }
+    } else {
+      // create new note
+      Note note = Note(
+          title: _titleController.text,
+          content: _contentController.text,
+          date: DateTime.now().toString());
+
+      DBHelper.dbhelper.createNote(note);
+      // noteProvider.addNewNote(note);
+
+      setState(() {});
+    }
+    AppRouter.route.replacmentRoute('/home');
   }
 
+  Map<String?, dynamic> data = {};
+  int id = -1;
+  String title = "";
+  String content = "";
   @override
   Widget build(BuildContext context) {
+    if (!_finishGetData) {
+      getNotesData().whenComplete(() {
+        if (!mounted) return;
+        _finishGetData = true;
+        setState(() {});
+      });
+    }
+    if (ModalRoute.of(context)!.settings.arguments != null) {
+      data =
+          ModalRoute.of(context)!.settings.arguments as Map<String?, dynamic>;
+      id = int.parse(data['id']);
+      title = data['title'];
+      content = data['content'];
+      if (!_replaceContent) {
+        _titleController.text = title;
+        _contentController.text = content;
+        _replaceContent = !_replaceContent;
+      }
+      setState(() {});
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("NotePad"),
         backgroundColor: Color(0xff907854),
+        leading: IconButton(
+            onPressed: () {
+              AppRouter.route.replacmentRoute('/home');
+            },
+            icon: Icon(Icons.arrow_back)),
         actions: [
           TextButton(
             onPressed: () {
-              _saveNote();
+              if (id == -1) {
+                _saveNote(-1);
+              } else {
+                _saveNote(id);
+              }
             },
             child: Text(
               'Save',

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:notepad/helper/app_router.dart';
-import 'package:notepad/screens/add_category.dart';
-import 'package:notepad/screens/note_detail.dart';
-import '../screens/add_note.dart';
+import '../helper/db_helper.dart';
+import '../helper/app_router.dart';
+import 'screens/category_screen.dart';
+import './screens/note_screen.dart';
 import './screens/home.dart';
 
-void main() => runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DBHelper.dbhelper.initDataBase();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -17,9 +21,8 @@ class MyApp extends StatelessWidget {
       navigatorKey: AppRouter.route.navKey,
       routes: {
         '/home': (ctx) => Home(),
-        '/add-note': (ctx) => AddNote(),
-        '/detail-note': (ctx) => DetailNote(),
-        '/add-categorie': (ctx) => AddCategory(),
+        '/add-note': (ctx) => NoteScreen(),
+        '/add-categorie': (ctx) => CategoryScreen(),
       },
     );
   }

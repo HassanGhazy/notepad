@@ -1,10 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:notepad/helper/app_router.dart';
+import 'package:notepad/helper/db_helper.dart';
+import 'package:notepad/models/Category.dart';
 import 'package:notepad/widgets/my_text.dart';
 
-class MyDrawer extends StatelessWidget {
+class MyDrawer extends StatefulWidget {
+  @override
+  _MyDrawerState createState() => _MyDrawerState();
+}
+
+class _MyDrawerState extends State<MyDrawer> {
+  List<Category> categoryList = [];
+  bool _finishGetData = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getCategoryData();
+  }
+
+  Future<void> getCategoryData() async {
+    DBHelper.dbhelper.getAllCategories().then((value) => categoryList = value);
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!_finishGetData) {
+      getCategoryData().whenComplete(() {
+        if (!mounted) return;
+        _finishGetData = true;
+        setState(() {});
+      });
+    }
     return Drawer(
       child: Container(
         color: const Color(0xffFFFFDD),
@@ -48,11 +75,27 @@ class MyDrawer extends StatelessWidget {
                       style: TextStyle(color: const Color(0xff777777)),
                     )),
               ),
+              Column(
+                children: categoryList
+                    .map((e) => ListTile(
+                          title: Text(e.nameCat!),
+                          leading: Icon(
+                            Icons.label,
+                            color: const Color(0xff747565),
+                          ),
+                        ))
+                    .toList(),
+              ),
               ListTile(
                 title: MyText("Edit Categories"),
                 leading: Icon(Icons.playlist_add),
                 onTap: () {
-                  AppRouter.route.replacmentRoute('/add-categorie');
+                  if (ModalRoute.of(context)!.settings.name ==
+                      '/add-categorie') {
+                    Navigator.of(context).pop();
+                  } else {
+                    AppRouter.route.replacmentRoute('/add-categorie');
+                  }
                 },
               ),
               Divider(),
