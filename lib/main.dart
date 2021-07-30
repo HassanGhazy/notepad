@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notepad/screens/backup.dart';
 import '../helper/db_helper.dart';
 import '../helper/app_router.dart';
 import 'screens/category_screen.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         '/home': (ctx) => Home(),
         '/add-note': (ctx) => NoteScreen(),
         '/add-categorie': (ctx) => CategoryScreen(),
+        '/backup': (ctx) => BackUp(),
       },
     );
   }

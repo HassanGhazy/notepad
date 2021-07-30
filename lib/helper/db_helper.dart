@@ -6,6 +6,8 @@ import '../models/Category.dart';
 import '../models/note.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
+import 'dart:convert' as convert;
+import 'package:encrypt/encrypt.dart' as encrypt;
 
 class DBHelper {
   DBHelper._();
@@ -15,11 +17,14 @@ class DBHelper {
   static const nameCatColumnName = 'nameCat';
   static const titleColumnName = 'title';
   static const contentColumnName = 'content';
-  static const dateColumnName = 'date';
+  static const dateEditionColumnName = 'dateEdition';
+  static const dateCreationColumnName = 'dateCreation';
   static const catColumnName = 'cat';
   static const tableNameNote = 'Note';
   static const tableNameCategory = 'Category';
   static const databaseName = 'notes.db';
+  static const SECRET_KEY = "KEY BACKUP HASAN";
+
   Future<void> initDataBase() async {
     database = await getDatabase();
   }
@@ -29,15 +34,26 @@ class DBHelper {
     String filePath = join(directory.path, databaseName);
     Database databases = await openDatabase(
       filePath,
-      version: 1,
+      version: 2,
       onCreate: (db, version) {
         db.execute(
-            '''create table Note (id INTEGER primary key autoincrement, title Text, content Text, date Text , cat Text )''');
+            '''create table $tableNameNote ($idColumnName INTEGER primary key autoincrement, $titleColumnName Text, $contentColumnName Text, $dateEditionColumnName Text , $catColumnName Text ,$dateCreationColumnName Text)''');
         db.execute(
-            '''create table Category (id INTEGER primary key autoincrement, nameCat Text)''');
+            '''create table $tableNameCategory ($idColumnName INTEGER primary key autoincrement, $nameCatColumnName Text)''');
       },
     );
     return databases;
+  }
+
+  Future<void> clearAllTables() async {
+    try {
+      var dbs = this.database;
+      await dbs!.delete(tableNameNote);
+      await dbs
+          .rawQuery("DELETE FROM sqlite_sequence where name='$tableNameNote'");
+
+      print('------ CLEAR ALL TABLE');
+    } catch (e) {}
   }
 
   Future<void> createNote(Note note) async {
@@ -83,5 +99,37 @@ class DBHelper {
   Future<void> updateCategory(Category cat) async {
     await database?.update(tableNameCategory, cat.toMap(),
         where: 'id=?', whereArgs: [cat.idCat]);
+  }
+
+  Future<String> generateBackup({bool isEncrypted = true}) async {
+    List<Map<String, dynamic>> listMaps = await database!.query(tableNameNote);
+
+    String json = convert.jsonEncode(listMaps);
+
+    if (isEncrypted) {
+      var key = encrypt.Key.fromUtf8(SECRET_KEY);
+      var iv = encrypt.IV.fromLength(16);
+      var encrypter = encrypt.Encrypter(encrypt.AES(key));
+      var encrypted = encrypter.encrypt(json, iv: iv);
+      return encrypted.base64;
+    } else {
+      return json;
+    }
+  }
+
+  Future<void> restoreBackup(String backup, {bool isEncrypted = true}) async {
+    Batch batch = database!.batch();
+
+    var key = encrypt.Key.fromUtf8(SECRET_KEY);
+    var iv = encrypt.IV.fromLength(16);
+    var encrypter = encrypt.Encrypter(encrypt.AES(key));
+
+    List<dynamic> json = convert
+        .jsonDecode(isEncrypted ? encrypter.decrypt64(backup, iv: iv) : backup);
+
+    for (int i = 0; i < json.length; i++) {
+      batch.insert('$tableNameNote', json[i]);
+    }
+    await batch.commit(continueOnError: false, noResult: true);
   }
 }

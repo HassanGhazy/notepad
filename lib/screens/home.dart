@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notepad/helper/app_router.dart';
 import 'package:notepad/helper/db_helper.dart';
+import 'package:notepad/helper/mycolor.dart';
 import 'package:notepad/models/note.dart';
 import 'package:notepad/widgets/my_drawer.dart';
 import 'package:intl/intl.dart';
@@ -11,21 +12,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<bool> selected = [];
+  List<bool> selectedNote = <bool>[].toList();
   bool selectedIsRunning = false;
   int count = 0;
   List<Note> notesList = [];
-  List<Note> tmpNotesList = [];
+  List<Note> tmpNotesList = []; // to use it in search
   bool _finishGetData = false;
   bool _enableSearch = false;
   bool _toggleSearchAndClose = false; //false => show search,true => show close
-
   final titleController = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-    getNotesData();
-  }
 
   @override
   void dispose() {
@@ -33,8 +28,187 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    getNotesData();
+  }
+
   Future<void> getNotesData() async {
     await DBHelper.dbhelper.getAllNotes().then((value) => notesList = value);
+  }
+
+  Future<void> optionsSort(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        int val = 2;
+        int tmpVal = val;
+
+        return AlertDialog(
+          title: const Text('Sort By'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: <ListTile>[
+                    ListTile(
+                      title: Text("Edit date from oldest"),
+                      onTap: () => setState(() => val = 1),
+                      leading: Radio(
+                        value: 1,
+                        groupValue: val,
+                        onChanged: (int? value) => setState(() => val = value!),
+                      ),
+                    ),
+                    ListTile(
+                      title: Text("Edit date from newest"),
+                      onTap: () => setState(() => val = 2),
+                      leading: Radio(
+                        value: 2,
+                        groupValue: val,
+                        onChanged: (int? value) => setState(() => val = value!),
+                      ),
+                    ),
+                    ListTile(
+                      title: Text("Title: A to Z"),
+                      onTap: () => setState(() => val = 3),
+                      leading: Radio(
+                        value: 3,
+                        groupValue: val,
+                        onChanged: (int? value) => setState(() => val = value!),
+                      ),
+                    ),
+                    ListTile(
+                      title: Text("Title: Z to A"),
+                      onTap: () => setState(() => val = 4),
+                      leading: Radio(
+                        value: 4,
+                        groupValue: val,
+                        onChanged: (int? value) => setState(() => val = value!),
+                      ),
+                    ),
+                    ListTile(
+                      title: Text("Creation date from oldest"),
+                      onTap: () => setState(() => val = 5),
+                      leading: Radio(
+                        value: 5,
+                        groupValue: val,
+                        onChanged: (int? value) => setState(() => val = value!),
+                      ),
+                    ),
+                    ListTile(
+                      title: Text("Creation date from newest"),
+                      onTap: () => setState(() => val = 6),
+                      leading: Radio(
+                        value: 6,
+                        groupValue: val,
+                        onChanged: (int? value) => setState(() => val = value!),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                val = tmpVal;
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Sort'),
+              onPressed: () {
+                switch (val) {
+                  case 1:
+                    Comparator<Note> ascendingDateEdition =
+                        (a, b) => a.dateEdition!.compareTo(b.dateEdition!);
+                    notesList = notesList..sort(ascendingDateEdition);
+                    break;
+                  case 2:
+                    Comparator<Note> descendingDateEdition =
+                        (b, a) => a.dateEdition!.compareTo(b.dateEdition!);
+                    notesList = notesList..sort(descendingDateEdition);
+                    break;
+                  case 3:
+                    Comparator<Note> ascendingTitle =
+                        (a, b) => a.title!.compareTo(b.title!);
+                    notesList = notesList..sort(ascendingTitle);
+                    break;
+                  case 4:
+                    Comparator<Note> descendingTitle =
+                        (b, a) => a.title!.compareTo(b.title!);
+                    notesList = notesList..sort(descendingTitle);
+                    break;
+                  case 5:
+                    Comparator<Note> ascendingDateCreation =
+                        (a, b) => a.dateCreation!.compareTo(b.dateCreation!);
+                    notesList = notesList..sort(ascendingDateCreation);
+                    break;
+                  case 6:
+                    Comparator<Note> descendingDateCreation =
+                        (b, a) => a.dateCreation!.compareTo(b.dateCreation!);
+                    notesList = notesList..sort(descendingDateCreation);
+                    break;
+                }
+                setState(() {});
+                val = tmpVal;
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> deleteAlert(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text("Delete the selected notes?"),
+          actions: <TextButton>[
+            TextButton(
+              child: const Text(
+                'CANCEL',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+              ),
+              onPressed: () {
+                int length = selectedNote.length;
+                for (int i = length - 1; i >= 0; i--) {
+                  if (selectedNote[i]) {
+                    selectedNote.removeAt(i);
+                    DBHelper.dbhelper.deleteNote(notesList[i]);
+                    notesList.removeAt(i);
+                  }
+                }
+                count = 0;
+                selectedIsRunning = false;
+                setState(() {});
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -57,15 +231,16 @@ class _HomeState extends State<Home> {
         ),
       ),
       appBar: AppBar(
-        backgroundColor: Color(0xff937654),
+        backgroundColor: MyColor.appBarColor,
         actions: selectedIsRunning
             ? [
                 IconButton(
                   tooltip: 'Select all the notes',
                   onPressed: () {
-                    for (int i = 0; i < selected.length; i++) {
-                      selected[i] = true;
+                    for (int i = 0; i < selectedNote.length; i++) {
+                      selectedNote[i] = true;
                     }
+                    count = selectedNote.length;
                     setState(() {});
                   },
                   icon: const Icon(
@@ -75,7 +250,9 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    deleteAlert(context);
+                  },
                   tooltip: 'Delete',
                   icon: const Icon(
                     Icons.delete,
@@ -108,79 +285,21 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    optionsSort(context);
+                  },
                   child: const Text(
                     'Sort',
                     style:
                         TextStyle(fontSize: 18, color: const Color(0xffffffff)),
                   ),
                 ),
-                TextButton(
-                  onPressed: () {
-                    selectedIsRunning = false;
-                    for (int i = 0; i < selected.length; i++) {
-                      selected[i] = false;
-                    }
-                    setState(() {});
-                  },
-                  child: const Icon(
-                    Icons.more_vert,
-                    color: const Color(0xffffffff),
-                    size: 25,
-                  ),
-                ),
+                popMenuItems(),
               ],
         title: selectedIsRunning
             ? Text('$count')
             : _enableSearch
-                ? TextField(
-                    autofocus: true,
-                    cursorColor: Color(0xff444444),
-                    controller: titleController,
-                    decoration: InputDecoration(
-                      hintStyle: TextStyle(color: const Color(0xFFffffff)),
-                      suffixIcon: _toggleSearchAndClose
-                          ? IconButton(
-                              icon: Icon(Icons.close),
-                              color: Color(0xff444444),
-                              onPressed: () {
-                                titleController.clear();
-                              },
-                            )
-                          : Icon(
-                              Icons.search,
-                              color: Color(0xff444444),
-                            ),
-                      focusColor: Color(0xff),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff)),
-                      ),
-                    ),
-                    onChanged: (value) {
-                      if (value.isEmpty) {
-                        _toggleSearchAndClose = false;
-                      } else {
-                        _toggleSearchAndClose = true;
-                      }
-                      if (notesList.isNotEmpty) {
-                        if (notesList.any((element) => element.title!
-                            .toLowerCase()
-                            .contains(value.toLowerCase()))) {
-                          if (tmpNotesList.length < notesList.length) {
-                            tmpNotesList = notesList;
-                          }
-
-                          notesList = tmpNotesList;
-                          notesList = notesList
-                              .where((element) => element.title!
-                                  .toLowerCase()
-                                  .contains(value.toLowerCase()))
-                              .toList();
-                          setState(() {});
-                        }
-                      }
-                    },
-                  )
+                ? searchWidet()
                 : Text('NotePad'),
         leading: selectedIsRunning || _enableSearch
             ? IconButton(
@@ -188,7 +307,9 @@ class _HomeState extends State<Home> {
                   _enableSearch = false;
                   if (tmpNotesList.isNotEmpty) notesList = tmpNotesList;
                   selectedIsRunning = false;
-                  selected = List.filled(selected.length, false);
+                  selectedNote =
+                      List.filled(selectedNote.length, false, growable: true);
+                  count = 0;
                   setState(() {});
                 },
                 icon: Icon(Icons.arrow_back))
@@ -205,9 +326,9 @@ class _HomeState extends State<Home> {
                     )),
               ),
       ),
-      backgroundColor: Color(0xffFFFFDD),
+      backgroundColor: MyColor.backgroundScaffold,
       drawer: selectedIsRunning ? null : MyDrawer(),
-      body: notesList.isEmpty
+      body: !_finishGetData
           ? Center(
               child: CircularProgressIndicator(),
             )
@@ -216,8 +337,8 @@ class _HomeState extends State<Home> {
                 children: notesList
                     .asMap()
                     .map((i, e) {
-                      while (notesList.length > selected.length) {
-                        selected.insert(0, false);
+                      while (notesList.length > selectedNote.length) {
+                        selectedNote.insert(0, false);
                       }
 
                       return MapEntry(
@@ -232,19 +353,9 @@ class _HomeState extends State<Home> {
                               border: Border.all(
                                 color: Colors.black,
                               ),
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: selected[i]
-                                    ? [
-                                        const Color(0xFFFBF6D6),
-                                        const Color(0xFFBB9E80),
-                                      ]
-                                    : [
-                                        const Color(0xFFFAFCCD),
-                                        const Color(0xFFFEFBCE),
-                                      ],
-                              ),
+                              gradient: selectedNote[i]
+                                  ? MyColor.containerColorWithSelected
+                                  : MyColor.containerColorWithoutSelected,
                             ),
                             child: ListTile(
                               title: Text(
@@ -253,26 +364,27 @@ class _HomeState extends State<Home> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(
-                                    "Last edit: ${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.date!))}",
+                                    "Last edit: ${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
                                     style: TextStyle(color: Color(0xff000000)),
                                   ),
                                 ],
                               ),
                               onTap: () {
-                                for (var i = 0; i < selected.length; i++) {
-                                  if (!selected[i]) count++;
-                                  if (selected[i]) {
-                                    selectedIsRunning = true;
-                                    break;
-                                  }
-                                }
+                                // for (var i = 0; i < selected.length; i++) {
+                                //   if (!selected[i]) count++;
+                                //   if (selected[i]) {
+                                //     selectedIsRunning = true;
+                                //     break;
+                                //   }
+                                // }
 
-                                if (count == selected.length) {
-                                  selectedIsRunning = false;
-                                }
+                                // if (count == selected.length) {
+                                //   selectedIsRunning = false;
+                                // }
+
                                 if (selectedIsRunning) {
-                                  selected[i] = !selected[i];
-                                  if (selected[i]) {
+                                  selectedNote[i] = !selectedNote[i];
+                                  if (selectedNote[i]) {
                                     count++;
                                   } else {
                                     count--;
@@ -283,14 +395,14 @@ class _HomeState extends State<Home> {
                                     'id': '${e.id}',
                                     'title': '${e.title}',
                                     'content': '${e.content}',
-                                    'dateUpdate': '${e.date}',
+                                    'dateUpdate': '${e.dateEdition}',
                                   });
                                 }
                               },
                               onLongPress: () {
                                 selectedIsRunning = true;
-                                selected[i] = !selected[i];
-                                if (selected[i]) {
+                                selectedNote[i] = !selectedNote[i];
+                                if (selectedNote[i]) {
                                   count++;
                                 } else {
                                   count--;
@@ -306,6 +418,85 @@ class _HomeState extends State<Home> {
                     .toList(),
               ),
             ),
+    );
+  }
+
+  Widget popMenuItems() {
+    return PopupMenuButton(
+      child: Icon(Icons.more_vert),
+      itemBuilder: (BuildContext bc) => [
+        PopupMenuItem(child: Text("Select all notes"), value: 0),
+        PopupMenuItem(child: Text("Import Text Files"), value: 1),
+        PopupMenuItem(child: Text("Export notes to text files"), value: 2),
+      ],
+      onSelected: (value) {
+        switch (value) {
+          case 0:
+            selectedIsRunning = true;
+            for (int i = 0; i < selectedNote.length; i++) {
+              selectedNote[i] = true;
+            }
+            count = selectedNote.length;
+            setState(() {});
+            break;
+          case 1:
+            break;
+          case 2:
+            break;
+          default:
+        }
+      },
+    );
+  }
+
+  TextField searchWidet() {
+    return TextField(
+      autofocus: true,
+      cursorColor: Color(0xff444444),
+      controller: titleController,
+      decoration: InputDecoration(
+        hintStyle: TextStyle(color: const Color(0xFFffffff)),
+        suffixIcon: _toggleSearchAndClose
+            ? IconButton(
+                icon: Icon(Icons.close),
+                color: Color(0xff444444),
+                onPressed: () {
+                  if (tmpNotesList.isNotEmpty) notesList = tmpNotesList;
+                  titleController.clear();
+                  setState(() {});
+                },
+              )
+            : Icon(
+                Icons.search,
+                color: Color(0xff444444),
+              ),
+        focusColor: Color(0xff),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Color(0xff)),
+        ),
+      ),
+      onChanged: (value) {
+        if (value.isEmpty) {
+          _toggleSearchAndClose = false;
+        } else {
+          _toggleSearchAndClose = true;
+        }
+        if (notesList.isNotEmpty) {
+          if (notesList.any((element) =>
+              element.title!.toLowerCase().contains(value.toLowerCase()))) {
+            if (tmpNotesList.length < notesList.length) {
+              tmpNotesList = notesList;
+            }
+
+            notesList = tmpNotesList;
+            notesList = notesList
+                .where((element) =>
+                    element.title!.toLowerCase().contains(value.toLowerCase()))
+                .toList();
+            setState(() {});
+          }
+        }
+      },
     );
   }
 }

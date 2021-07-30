@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notepad/helper/mycolor.dart';
 
 class MyText extends StatelessWidget {
   MyText(this.text);
@@ -7,7 +8,8 @@ class MyText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text!,
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+      style: TextStyle(
+          fontWeight: FontWeight.bold, fontSize: 15, color: MyColor.blackcolor),
     );
   }
 }

@@ -50,7 +50,7 @@ class _NoteScreenState extends State<NoteScreen> {
           id: id,
           title: _titleController.text,
           content: _contentController.text,
-          date: DateTime.now().toString());
+          dateEdition: DateTime.now().toString());
       DBHelper.dbhelper.updateNote(note);
 
       for (int j = i; j > 0; j--) {
@@ -63,7 +63,8 @@ class _NoteScreenState extends State<NoteScreen> {
       Note note = Note(
           title: _titleController.text,
           content: _contentController.text,
-          date: DateTime.now().toString());
+          dateCreation: DateTime.now().toString(),
+          dateEdition: DateTime.now().toString());
 
       DBHelper.dbhelper.createNote(note);
       // noteProvider.addNewNote(note);

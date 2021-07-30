@@ -5,14 +5,16 @@ class Note {
   int? id;
   String? title;
   String? content;
-  String? date;
+  String? dateEdition;
+  String? dateCreation;
   List<Category>? cat;
 
   Note({
     this.id,
     required this.title,
     required this.content,
-    required this.date,
+    required this.dateEdition,
+    this.dateCreation,
     this.cat,
   });
 
@@ -21,7 +23,8 @@ class Note {
       DBHelper.idColumnName: this.id,
       DBHelper.titleColumnName: this.title,
       DBHelper.contentColumnName: this.content,
-      DBHelper.dateColumnName: this.date,
+      DBHelper.dateEditionColumnName: this.dateEdition,
+      DBHelper.dateCreationColumnName: this.dateCreation,
       DBHelper.catColumnName: this.cat,
     };
   }
@@ -30,7 +33,8 @@ class Note {
     this.id = map[DBHelper.idColumnName];
     this.title = map[DBHelper.titleColumnName];
     this.content = map[DBHelper.contentColumnName];
-    this.date = map[DBHelper.dateColumnName];
+    this.dateEdition = map[DBHelper.dateEditionColumnName];
+    this.dateCreation = map[DBHelper.dateCreationColumnName];
     this.cat = map[DBHelper.catColumnName];
   }
 }

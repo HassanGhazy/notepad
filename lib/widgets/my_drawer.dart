@@ -102,7 +102,9 @@ class _MyDrawerState extends State<MyDrawer> {
               ListTile(
                 title: MyText("Backup"),
                 leading: Icon(Icons.storage),
-                onTap: () {},
+                onTap: () {
+                  AppRouter.route.replacmentRoute('/backup');
+                },
               ),
               ListTile(
                 title: MyText("Trash"),

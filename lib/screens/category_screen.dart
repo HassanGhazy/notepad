@@ -54,13 +54,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
             TextButton(
               child: const Text('Approve'),
               onPressed: () async {
-                int index = categoryList.indexOf(cat);
-                cat.nameCat = _changetitleCategoryController.text;
-                categoryList[index].nameCat =
-                    _changetitleCategoryController.text;
-                await DBHelper.dbhelper.updateCategory(cat);
+                if (_changetitleCategoryController.text != "") {
+                  int index = categoryList.indexOf(cat);
+                  cat.nameCat = _changetitleCategoryController.text;
+                  categoryList[index].nameCat =
+                      _changetitleCategoryController.text;
+                  await DBHelper.dbhelper.updateCategory(cat);
 
-                setState(() {});
+                  setState(() {});
+                }
                 Navigator.of(context).pop();
               },
             ),
