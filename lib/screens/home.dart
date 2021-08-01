@@ -246,14 +246,28 @@ class _HomeState extends State<Home> {
                   if (isCheck[i]) {
                     for (int j = 0; j < selectedNote.length; j++) {
                       if (selectedNote[j]) {
-                        if (!notesList[j].cat!.contains(categoryList[i])) {
-                          notesList[j].cat!.add(categoryList[i]);
-                          DBHelper.dbhelper.updateNote(notesList[j]);
+                        if (!notesList[j]
+                            .cat!
+                            .contains(categoryList[i].nameCat!)) {
+                          notesList[j].cat = notesList[j].cat! +
+                              categoryList[i].nameCat! +
+                              ", ";
                         }
                       }
                     }
                   }
                 }
+
+                for (int i = 0; i < notesList.length; i++) {
+                  if (selectedNote[i]) {
+                    notesList[i].cat = notesList[i]
+                        .cat!
+                        .trimRight()
+                        .substring(0, notesList[i].cat!.length - 1);
+                    DBHelper.dbhelper.updateNote(notesList[i]);
+                  }
+                }
+
                 setState(() {});
                 Navigator.of(context).pop();
               },
@@ -464,20 +478,23 @@ class _HomeState extends State<Home> {
                       while (notesList.length > selectedNote.length) {
                         selectedNote.insert(0, false);
                       }
-                      String cat = "";
-                      if (e.cat![0].nameCat != null) {
-                        List<String> parts = e.cat![0].nameCat!.split(',');
-                        int k = 0;
-                        for (k = 0; k < parts.length - 2; k++) {
-                          if (parts[k].length != 0 && k <= 1)
-                            cat += parts[k] + ',';
-                        }
-                        if (parts.length > 1) cat += parts[parts.length - 2];
-                        if (parts[k].length != 0 && k >= 2) {
-                          cat += " (+${parts.length - 1 - k})";
-                        }
+                      List<String> categoryNumber = e.cat!.split(',');
+                      String categorySplittedString = "";
+                      categoryNumber.removeWhere((element) => element == "");
+                      if (categoryNumber.length > 1) {
+                        categorySplittedString =
+                            categoryNumber[0] + "," + categoryNumber[1];
+                        categorySplittedString +=
+                            (categoryNumber.length - 3 >= 0)
+                                ? (categorySplittedString.length > 30)
+                                    ? categorySplittedString.substring(0, 28) +
+                                        "..." +
+                                        "(+${categoryNumber.length - 2})"
+                                    : "(+${categoryNumber.length - 2})"
+                                : "";
+                      } else {
+                        categorySplittedString = e.cat!;
                       }
-
                       return MapEntry(
                         i,
                         Card(
@@ -501,25 +518,11 @@ class _HomeState extends State<Home> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Expanded(
-                                    child: ListView.builder(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 17),
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder: (context, index) {
-                                        return Text(
-                                          cat == ""
-                                              ? '${index > 2 ? "" : "${e.cat![index].nameCat}${index < e.cat!.length - 1 && index != 0 ? ", " : ""}"}${index > 2 && index == e.cat!.length - 1 ? "(+${e.cat!.length - 3})" : ""}'
-                                              : cat,
-                                          style: TextStyle(
-                                              color: Color(0xff000000),
-                                              fontSize: 13),
-                                          textAlign: TextAlign.center,
-                                        );
-                                      },
-                                      itemCount:
-                                          e.cat == null ? 0 : e.cat!.length,
-                                    ),
+                                  Text(
+                                    "$categorySplittedString",
+                                    style: TextStyle(
+                                        color: Color(0xff000000), fontSize: 13),
+                                    textAlign: TextAlign.center,
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 7),

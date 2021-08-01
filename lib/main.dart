@@ -21,11 +21,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return
-        //  ChangeNotifierProvider.value(
-        //   value: NoteProvider(),
-        //   child:
-        MaterialApp(
+    return MaterialApp(
       title: 'NotePad',
       debugShowCheckedModeBanner: false,
       home: Home(),
@@ -38,7 +34,6 @@ class MyApp extends StatelessWidget {
         '/trash': (ctx) => TrashScreen(),
         '/one-category': (ctx) => OneCategoryNotesScreen(""),
       },
-      // ),
     );
   }
 }

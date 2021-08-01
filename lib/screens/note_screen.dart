@@ -65,7 +65,7 @@ class _NoteScreenState extends State<NoteScreen> {
         content: _contentController.text,
         dateCreation: DateTime.now().toString(),
         dateEdition: DateTime.now().toString(),
-        cat: [],
+        cat: "",
       );
 
       DBHelper.dbhelper.createNote(note);
