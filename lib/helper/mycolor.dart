@@ -8,6 +8,8 @@ class MyColor {
   static const Color backgroundScaffold = const Color(0xffFFFFDD);
   static const Color blackcolor = const Color(0xff000000);
   static const Color textColor = const Color(0xff7D7159);
+  static const Color middleLineDrawer = const Color(0xffEDEDCB);
+
   static BoxDecoration containerDercoration = BoxDecoration(
     borderRadius: const BorderRadius.all(Radius.circular(10)),
     border: Border.all(

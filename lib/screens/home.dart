@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:notepad/helper/app_router.dart';
 import 'package:notepad/helper/db_helper.dart';
 import 'package:notepad/helper/mycolor.dart';
+import 'package:notepad/helper/shared_preference_helper.dart';
+import 'package:notepad/models/Category.dart';
+import 'package:notepad/models/deletedNote.dart';
 import 'package:notepad/models/note.dart';
+// import 'package:notepad/provider/note_provider.dart';
 import 'package:notepad/widgets/my_drawer.dart';
 import 'package:intl/intl.dart';
+// import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -17,10 +22,12 @@ class _HomeState extends State<Home> {
   int count = 0;
   List<Note> notesList = [];
   List<Note> tmpNotesList = []; // to use it in search
-  bool _finishGetData = false;
+  bool _finishGetDataNotes = false;
   bool _enableSearch = false;
   bool _toggleSearchAndClose = false; //false => show search,true => show close
   final titleController = TextEditingController();
+  List<Category> categoryList = [];
+  bool _finishGetDataCategories = false;
 
   @override
   void dispose() {
@@ -32,10 +39,15 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     getNotesData();
+    getCategoryData();
   }
 
   Future<void> getNotesData() async {
     await DBHelper.dbhelper.getAllNotes().then((value) => notesList = value);
+  }
+
+  Future<void> getCategoryData() async {
+    DBHelper.dbhelper.getAllCategories().then((value) => categoryList = value);
   }
 
   Future<void> optionsSort(BuildContext context) async {
@@ -43,8 +55,9 @@ class _HomeState extends State<Home> {
       context: context,
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
-        int val = 2;
-        int tmpVal = val;
+        int val =
+            SharedPreferenceHelper.sharedPreference.getIntData('sortValue') ??
+                2;
 
         return AlertDialog(
           title: const Text('Sort By'),
@@ -116,7 +129,6 @@ class _HomeState extends State<Home> {
             TextButton(
               child: const Text('Cancel'),
               onPressed: () {
-                val = tmpVal;
                 Navigator.of(context).pop();
               },
             ),
@@ -156,12 +168,119 @@ class _HomeState extends State<Home> {
                     break;
                 }
                 setState(() {});
-                val = tmpVal;
+
+                SharedPreferenceHelper.sharedPreference
+                    .saveIntData("sortValue", val);
                 Navigator.of(context).pop();
               },
             ),
           ],
         );
+      },
+    );
+  }
+
+  Future<void> addCategoriesToNotes() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        List<bool> isCheck = <bool>[];
+        isCheck = List.filled(categoryList.length, false);
+        return AlertDialog(
+          title: const Text('Select category'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return !_finishGetDataCategories
+                  ? Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: categoryList
+                            .asMap()
+                            .map(
+                              (i, e) {
+                                return MapEntry(
+                                  i,
+                                  Column(
+                                    children: [
+                                      CheckboxListTile(
+                                        value: isCheck[i],
+                                        onChanged: (bool? value) {
+                                          isCheck[i] = value!;
+                                          setState(() {});
+                                        },
+                                        title: Text("${e.nameCat}"),
+                                        dense: true,
+                                      ),
+                                      Divider(color: MyColor.textColor)
+                                    ],
+                                  ),
+                                );
+                              },
+                            )
+                            .values
+                            .toList(),
+                      ),
+                    );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+              ),
+              onPressed: () {
+                for (int i = 0; i < isCheck.length; i++) {
+                  if (isCheck[i]) {
+                    for (int j = 0; j < selectedNote.length; j++) {
+                      if (selectedNote[j]) {
+                        if (!notesList[j].cat!.contains(categoryList[i])) {
+                          notesList[j].cat!.add(categoryList[i]);
+                          DBHelper.dbhelper.updateNote(notesList[j]);
+                        }
+                      }
+                    }
+                  }
+                }
+                setState(() {});
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget popMenuItemsSelected() {
+    return PopupMenuButton(
+      child: Icon(Icons.more_vert),
+      itemBuilder: (BuildContext bc) => [
+        PopupMenuItem(child: Text("Export notes to text files"), value: 0),
+        PopupMenuItem(child: Text("Categories"), value: 1),
+      ],
+      onSelected: (value) {
+        switch (value) {
+          case 0:
+            break;
+          case 1:
+            addCategoriesToNotes();
+            break;
+
+          default:
+        }
       },
     );
   }
@@ -194,6 +313,11 @@ class _HomeState extends State<Home> {
                 int length = selectedNote.length;
                 for (int i = length - 1; i >= 0; i--) {
                   if (selectedNote[i]) {
+                    DeletedNote deletedNote =
+                        DeletedNote.fromMap(notesList[i].toMap());
+
+                    DBHelper.dbhelper.createDeletedNote(deletedNote);
+
                     selectedNote.removeAt(i);
                     DBHelper.dbhelper.deleteNote(notesList[i]);
                     notesList.removeAt(i);
@@ -213,10 +337,18 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_finishGetData) {
+    if (!_finishGetDataNotes) {
       getNotesData().whenComplete(() {
         if (!mounted) return;
-        _finishGetData = true;
+        _finishGetDataNotes = true;
+        setState(() {});
+      });
+    }
+    if (!_finishGetDataCategories) {
+      getCategoryData().whenComplete(() {
+        if (!mounted) return;
+        _finishGetDataCategories = true;
+
         setState(() {});
       });
     }
@@ -260,15 +392,7 @@ class _HomeState extends State<Home> {
                     size: 25,
                   ),
                 ),
-                IconButton(
-                  onPressed: () {},
-                  tooltip: 'More Vert',
-                  icon: const Icon(
-                    Icons.more_vert,
-                    color: Color(0xffffffff),
-                    size: 25,
-                  ),
-                ),
+                popMenuItemsSelected()
               ]
             : [
                 _enableSearch
@@ -328,7 +452,7 @@ class _HomeState extends State<Home> {
       ),
       backgroundColor: MyColor.backgroundScaffold,
       drawer: selectedIsRunning ? null : MyDrawer(),
-      body: !_finishGetData
+      body: !_finishGetDataNotes
           ? Center(
               child: CircularProgressIndicator(),
             )
@@ -340,13 +464,26 @@ class _HomeState extends State<Home> {
                       while (notesList.length > selectedNote.length) {
                         selectedNote.insert(0, false);
                       }
+                      String cat = "";
+                      if (e.cat![0].nameCat != null) {
+                        List<String> parts = e.cat![0].nameCat!.split(',');
+                        int k = 0;
+                        for (k = 0; k < parts.length - 2; k++) {
+                          if (parts[k].length != 0 && k <= 1)
+                            cat += parts[k] + ',';
+                        }
+                        if (parts.length > 1) cat += parts[parts.length - 2];
+                        if (parts[k].length != 0 && k >= 2) {
+                          cat += " (+${parts.length - 1 - k})";
+                        }
+                      }
 
                       return MapEntry(
                         i,
                         Card(
                           elevation: 0,
                           child: Container(
-                            height: 70,
+                            height: 60,
                             decoration: BoxDecoration(
                               borderRadius:
                                   new BorderRadius.all(Radius.circular(10)),
@@ -361,27 +498,41 @@ class _HomeState extends State<Home> {
                               title: Text(
                                   "${e.title! == "" ? "Untitled" : e.title!}"),
                               subtitle: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    "Last edit: ${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
-                                    style: TextStyle(color: Color(0xff000000)),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 17),
+                                      scrollDirection: Axis.horizontal,
+                                      itemBuilder: (context, index) {
+                                        return Text(
+                                          cat == ""
+                                              ? '${index > 2 ? "" : "${e.cat![index].nameCat}${index < e.cat!.length - 1 && index != 0 ? ", " : ""}"}${index > 2 && index == e.cat!.length - 1 ? "(+${e.cat!.length - 3})" : ""}'
+                                              : cat,
+                                          style: TextStyle(
+                                              color: Color(0xff000000),
+                                              fontSize: 13),
+                                          textAlign: TextAlign.center,
+                                        );
+                                      },
+                                      itemCount:
+                                          e.cat == null ? 0 : e.cat!.length,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 7),
+                                    child: Text(
+                                      "Last edit: ${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
+                                      style: TextStyle(
+                                          color: Color(0xff000000),
+                                          fontSize: 13),
+                                    ),
                                   ),
                                 ],
                               ),
                               onTap: () {
-                                // for (var i = 0; i < selected.length; i++) {
-                                //   if (!selected[i]) count++;
-                                //   if (selected[i]) {
-                                //     selectedIsRunning = true;
-                                //     break;
-                                //   }
-                                // }
-
-                                // if (count == selected.length) {
-                                //   selectedIsRunning = false;
-                                // }
-
                                 if (selectedIsRunning) {
                                   selectedNote[i] = !selectedNote[i];
                                   if (selectedNote[i]) {
@@ -439,7 +590,7 @@ class _HomeState extends State<Home> {
             count = selectedNote.length;
             setState(() {});
             break;
-          case 1:
+          case 1: //TODO://
             break;
           case 2:
             break;

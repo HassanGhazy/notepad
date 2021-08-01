@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:notepad/models/deletedNote.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../models/Category.dart';
@@ -22,6 +23,7 @@ class DBHelper {
   static const catColumnName = 'cat';
   static const tableNameNote = 'Note';
   static const tableNameCategory = 'Category';
+  static const tableNameDeletedNote = 'DeletedNote';
   static const databaseName = 'notes.db';
   static const SECRET_KEY = "KEY BACKUP HASAN";
 
@@ -34,12 +36,14 @@ class DBHelper {
     String filePath = join(directory.path, databaseName);
     Database databases = await openDatabase(
       filePath,
-      version: 2,
+      version: 1,
       onCreate: (db, version) {
         db.execute(
             '''create table $tableNameNote ($idColumnName INTEGER primary key autoincrement, $titleColumnName Text, $contentColumnName Text, $dateEditionColumnName Text , $catColumnName Text ,$dateCreationColumnName Text)''');
         db.execute(
             '''create table $tableNameCategory ($idColumnName INTEGER primary key autoincrement, $nameCatColumnName Text)''');
+        db.execute(
+            '''create table $tableNameDeletedNote ($idColumnName INTEGER primary key autoincrement, $titleColumnName Text, $contentColumnName Text, $dateEditionColumnName Text , $catColumnName Text ,$dateCreationColumnName Text)''');
       },
     );
     return databases;
@@ -64,8 +68,19 @@ class DBHelper {
     await database?.insert(tableNameCategory, category.toMap());
   }
 
+  Future<void> createDeletedNote(DeletedNote deletedNote) async {
+    await database?.insert(tableNameDeletedNote, deletedNote.toMap());
+  }
+
   Future<List<Note>> getAllNotes() async {
     List<Map<String?, Object?>> res = await database!.query(tableNameNote);
+    List<Note> notes = res.map((e) => Note.fromMap(e)).toList();
+    return notes;
+  }
+
+  Future<List<Note>> findNotes(String text) async {
+    List<Map<String?, Object?>> res = await database!.rawQuery(
+        "SELECT * FROM $tableNameNote WHERE $catColumnName LIKE '%$text%'");
     List<Note> notes = res.map((e) => Note.fromMap(e)).toList();
     return notes;
   }
@@ -74,6 +89,14 @@ class DBHelper {
     List<Map<String, Object?>> res = await database!.query(tableNameCategory);
     List<Category> categories = res.map((e) => Category.fromMap(e)).toList();
     return categories;
+  }
+
+  Future<List<DeletedNote>> getAllDeletedNotes() async {
+    List<Map<String?, Object?>> res =
+        await database!.query(tableNameDeletedNote);
+    List<DeletedNote> deletedNote =
+        res.map((e) => DeletedNote.fromMap(e)).toList();
+    return deletedNote;
   }
 
   Future<void> deleteCategory(Category cat) async {
@@ -89,6 +112,11 @@ class DBHelper {
   Future<void> deleteNote(Note note) async {
     await database
         ?.delete(tableNameNote, where: 'id=?', whereArgs: ['${note.id}']);
+  }
+
+  Future<void> deleteNoteForever(DeletedNote deletedNote) async {
+    await database?.delete(tableNameDeletedNote,
+        where: 'id=?', whereArgs: ['${deletedNote.id}']);
   }
 
   Future<void> updateNote(Note note) async {

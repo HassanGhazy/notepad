@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notepad/helper/mycolor.dart';
 import '../helper/db_helper.dart';
 import '../models/Category.dart';
 import '../widgets/my_drawer.dart';
@@ -63,6 +64,46 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
                   setState(() {});
                 }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> deleteCategoryAlert(Category e) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // !user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(
+              "Delete category '${e.nameCat}'? Notes from the category won't be deleted"),
+          actions: <TextButton>[
+            TextButton(
+              child: const Text(
+                'CANCEL',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+              ),
+              onPressed: () {
+                int index = categoryList.indexOf(e);
+                categoryList.removeAt(index);
+                DBHelper.dbhelper.deleteCategory(e);
+                setState(() {});
+
                 Navigator.of(context).pop();
               },
             ),
@@ -195,11 +236,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    int index = categoryList.indexOf(e);
-                                    categoryList.removeAt(index);
-                                    // categoryProvider.deleteCategory(e);
-                                    DBHelper.dbhelper.deleteCategory(e);
-                                    setState(() {});
+                                    deleteCategoryAlert(e);
                                   },
                                   icon: Icon(
                                     Icons.delete,

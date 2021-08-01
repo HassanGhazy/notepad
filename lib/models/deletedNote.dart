@@ -1,7 +1,7 @@
 import 'package:notepad/helper/db_helper.dart';
 import 'package:notepad/models/Category.dart';
 
-class Note {
+class DeletedNote {
   int? id;
   String? title;
   String? content;
@@ -9,23 +9,20 @@ class Note {
   String? dateCreation;
   List<Category>? cat;
 
-  Note({
-    this.id,
+  DeletedNote({
+    required this.id,
     required this.title,
     required this.content,
     required this.dateEdition,
-    this.dateCreation,
+    required this.dateCreation,
     this.cat,
   });
 
   toMap() {
     String allCat = "";
     this.cat!.forEach((e) {
-      allCat += e.nameCat! + ", ";
+      allCat += e.nameCat!;
     });
-    if (allCat.length > 2) {
-      allCat = allCat.trimRight().substring(2);
-    }
     return {
       DBHelper.idColumnName: this.id,
       DBHelper.titleColumnName: this.title,
@@ -36,13 +33,12 @@ class Note {
     };
   }
 
-  Note.fromMap(Map map) {
-    List<Category> cat = [Category(nameCat: map[DBHelper.catColumnName])];
+  DeletedNote.fromMap(Map map) {
     this.id = map[DBHelper.idColumnName];
     this.title = map[DBHelper.titleColumnName];
     this.content = map[DBHelper.contentColumnName];
     this.dateEdition = map[DBHelper.dateEditionColumnName];
     this.dateCreation = map[DBHelper.dateCreationColumnName];
-    this.cat = cat;
+    this.cat = [Category(nameCat: map[DBHelper.catColumnName])];
   }
 }

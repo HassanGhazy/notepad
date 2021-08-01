@@ -13,4 +13,8 @@ class AppRouter {
   replacmentRoute(String routeName) {
     navKey.currentState!.pushReplacementNamed(routeName);
   }
+
+  replacmentRouteWithArgs(String routeName, Object args) {
+    navKey.currentState!.pushReplacementNamed(routeName, arguments: args);
+  }
 }

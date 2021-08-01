@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:notepad/helper/app_router.dart';
 import 'package:notepad/helper/db_helper.dart';
+import 'package:notepad/helper/mycolor.dart';
 import 'package:notepad/models/Category.dart';
+import 'package:notepad/screens/one_category_notes_screen.dart';
 import 'package:notepad/widgets/my_text.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -65,7 +67,10 @@ class _MyDrawerState extends State<MyDrawer> {
                   }
                 },
               ),
-              Divider(),
+              Divider(
+                color: MyColor.middleLineDrawer,
+                thickness: 2,
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Align(
@@ -83,6 +88,14 @@ class _MyDrawerState extends State<MyDrawer> {
                             Icons.label,
                             color: const Color(0xff747565),
                           ),
+                          onTap: () {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
+                                    OneCategoryNotesScreen(e.nameCat!),
+                              ),
+                            );
+                          },
                         ))
                     .toList(),
               ),
@@ -98,20 +111,36 @@ class _MyDrawerState extends State<MyDrawer> {
                   }
                 },
               ),
-              Divider(),
+              Divider(
+                color: MyColor.middleLineDrawer,
+                thickness: 2,
+              ),
               ListTile(
                 title: MyText("Backup"),
                 leading: Icon(Icons.storage),
                 onTap: () {
-                  AppRouter.route.replacmentRoute('/backup');
+                  if (ModalRoute.of(context)!.settings.name == '/backup') {
+                    Navigator.of(context).pop();
+                  } else {
+                    AppRouter.route.replacmentRoute('/backup');
+                  }
                 },
               ),
               ListTile(
                 title: MyText("Trash"),
                 leading: Icon(Icons.delete),
-                onTap: () {},
+                onTap: () {
+                  if (ModalRoute.of(context)!.settings.name == '/trash') {
+                    Navigator.of(context).pop();
+                  } else {
+                    AppRouter.route.replacmentRoute('/trash');
+                  }
+                },
               ),
-              Divider(),
+              Divider(
+                color: MyColor.middleLineDrawer,
+                thickness: 2,
+              ),
               ListTile(
                 title: MyText("Setting"),
                 leading: Icon(Icons.settings),

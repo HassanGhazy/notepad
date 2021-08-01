@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-class MyFile {
-  MyFile._();
-  static MyFile files = MyFile._();
+class FileHelper {
+  FileHelper._();
+  static FileHelper files = FileHelper._();
   writeInFile(String fileName, String data) async {
     Directory directory = await getApplicationDocumentsDirectory();
     String filePath = directory.path + '/$fileName.text';
@@ -13,8 +13,8 @@ class MyFile {
 
   Future<String> readFromFile(String fileName) async {
     Directory directory = await getApplicationDocumentsDirectory();
-    String filePath2 = directory.path + '/$fileName.text';
-    File file = File(filePath2);
+    String filePath = directory.path + '/$fileName.text';
+    File file = File(filePath);
     String fileContent = await file.readAsString();
     return fileContent;
   }

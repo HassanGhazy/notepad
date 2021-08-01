@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notepad/helper/db_helper.dart';
 import 'package:notepad/helper/mycolor.dart';
-import 'package:notepad/helper/myfile.dart';
+import 'package:notepad/helper/file_helper.dart';
 import 'package:notepad/widgets/my_drawer.dart';
 import 'package:notepad/widgets/my_text.dart';
 
@@ -49,7 +49,7 @@ class BackUp extends StatelessWidget {
                     TextButton(
                       onPressed: () async {
                         String data = await DBHelper.dbhelper.generateBackup();
-                        MyFile.files.writeInFile('backup', data);
+                        FileHelper.files.writeInFile('backup', data);
                       },
                       child: Container(
                         height: 60,
@@ -69,7 +69,7 @@ class BackUp extends StatelessWidget {
                     TextButton(
                       onPressed: () async {
                         String backup =
-                            await MyFile.files.readFromFile('backup');
+                            await FileHelper.files.readFromFile('backup');
                         DBHelper.dbhelper.restoreBackup(backup);
                       },
                       child: Container(
