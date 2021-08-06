@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notepad/helper/mycolor.dart';
+import '../helper/mycolor.dart';
 import '../helper/db_helper.dart';
 import '../models/Category.dart';
 import '../widgets/my_drawer.dart';
@@ -10,10 +10,12 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  final _titleCategoryController = TextEditingController();
-  final _changetitleCategoryController = TextEditingController();
-  final _form = GlobalKey<FormState>();
-  List<Category> categoryList = [];
+  final TextEditingController _titleCategoryController =
+      TextEditingController();
+  final TextEditingController _changetitleCategoryController =
+      TextEditingController();
+  final GlobalKey<FormState> _form = GlobalKey<FormState>();
+  List<Category> categoryList = <Category>[];
   bool _finishGetData = false;
   @override
   void dispose() {
@@ -29,7 +31,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   Future<void> getCategoryData() async {
-    DBHelper.dbhelper.getAllCategories().then((value) => categoryList = value);
+    DBHelper.dbhelper
+        .getAllCategories()
+        .then((List<Category> value) => categoryList = value);
   }
 
   Future<void> _showMyDialog(Category cat) async {
@@ -43,7 +47,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           content: TextFormField(
             controller: _changetitleCategoryController,
             maxLines: 1,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'edit category name',
               hintStyle: TextStyle(fontSize: 18, color: Colors.grey),
             ),
@@ -56,7 +60,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               child: const Text('Approve'),
               onPressed: () async {
                 if (_changetitleCategoryController.text != "") {
-                  int index = categoryList.indexOf(cat);
+                  final int index = categoryList.indexOf(cat);
                   cat.nameCat = _changetitleCategoryController.text;
                   categoryList[index].nameCat =
                       _changetitleCategoryController.text;
@@ -99,7 +103,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
               ),
               onPressed: () {
-                int index = categoryList.indexOf(e);
+                final int index = categoryList.indexOf(e);
                 categoryList.removeAt(index);
                 DBHelper.dbhelper.deleteCategory(e);
                 setState(() {});
@@ -118,20 +122,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
     // final categoryProvider = Provider.of<NoteProvider>(context, listen: false);
     if (!_finishGetData) {
       getCategoryData().whenComplete(() {
-        if (!mounted) return;
-        _finishGetData = true;
-        setState(() {});
+        if (mounted) {
+          _finishGetData = true;
+          setState(() {});
+        }
       });
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("Categories"),
-        backgroundColor: Color(0xff907854),
+        title: const Text("Categories"),
+        backgroundColor: const Color(0xff907854),
       ),
-      backgroundColor: Color(0xffFDFCCE),
+      backgroundColor: const Color(0xffFDFCCE),
       drawer: MyDrawer(),
       body: Column(
-        children: [
+        children: <Widget>[
           Container(
             height: 70,
             child: Form(
@@ -139,23 +144,25 @@ class _CategoryScreenState extends State<CategoryScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
-                  children: [
+                  children: <Widget>[
                     Expanded(
                       child: TextFormField(
                         controller: _titleCategoryController,
                         maxLines: 1,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'New category name',
                           hintStyle:
                               TextStyle(fontSize: 18, color: Colors.grey),
                         ),
                         onFieldSubmitted: (_) {
                           FocusScope.of(context).requestFocus(FocusNode());
-                          bool isNotExist = categoryList.every((element) =>
-                              element.nameCat != _titleCategoryController.text);
+                          final bool isNotExist = categoryList.every(
+                              (Category element) =>
+                                  element.nameCat !=
+                                  _titleCategoryController.text);
                           if (_titleCategoryController.text.isNotEmpty &&
                               isNotExist) {
-                            Category category = Category(
+                            final Category category = Category(
                                 nameCat: _titleCategoryController.text);
                             DBHelper.dbhelper.createCategory(category);
                             _titleCategoryController.clear();
@@ -172,24 +179,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     ),
                     DecoratedBox(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(10),
                           bottomRight: Radius.circular(10),
                           topLeft: Radius.circular(10),
                           topRight: Radius.circular(25),
                         ),
-                        border: Border.all(color: Color(0xff999999)),
-                        gradient: LinearGradient(
-                          colors: [Color(0xffFAFAC6), Color(0xffFAF4B6)],
+                        border: Border.all(color: const Color(0xff999999)),
+                        gradient: const LinearGradient(
+                          colors: <Color>[Color(0xffFAFAC6), Color(0xffFAF4B6)],
                         ),
                       ),
                       child: ElevatedButton(
                         onPressed: () async {
-                          bool isNotExist = categoryList.every((element) =>
-                              element.nameCat != _titleCategoryController.text);
+                          final bool isNotExist = categoryList.every(
+                              (Category element) =>
+                                  element.nameCat !=
+                                  _titleCategoryController.text);
                           if (_titleCategoryController.text.isNotEmpty &&
                               isNotExist) {
-                            Category category = Category(
+                            final Category category = Category(
                                 nameCat: _titleCategoryController.text);
                             DBHelper.dbhelper.createCategory(category);
                             _titleCategoryController.clear();
@@ -203,7 +212,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         style: ElevatedButton.styleFrom(
                             primary: Colors.transparent,
                             shadowColor: Colors.transparent),
-                        child: Text(
+                        child: const Text(
                           'Add',
                           style: TextStyle(color: Colors.black),
                         ),
@@ -219,17 +228,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
               child: Column(
                 children: categoryList
                     .map(
-                      (e) => Column(
-                        children: [
+                      (Category e) => Column(
+                        children: <Widget>[
                           ListTile(
                             title: Text(e.nameCat!),
-                            leading: Icon(Icons.apps),
+                            leading: const Icon(Icons.apps),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <IconButton>[
                                 IconButton(
                                   onPressed: () async => await _showMyDialog(e),
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.edit,
                                     color: Colors.black,
                                   ),
@@ -238,7 +247,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   onPressed: () {
                                     deleteCategoryAlert(e);
                                   },
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.delete,
                                     color: Colors.black,
                                   ),
@@ -246,7 +255,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               ],
                             ),
                           ),
-                          Divider(),
+                          const Divider(),
                         ],
                       ),
                     )

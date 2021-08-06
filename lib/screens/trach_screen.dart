@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:notepad/helper/db_helper.dart';
-import 'package:notepad/helper/mycolor.dart';
-import 'package:notepad/models/deletedNote.dart';
-import 'package:notepad/models/note.dart';
-// import 'package:notepad/provider/note_provider.dart';
-import 'package:notepad/widgets/my_drawer.dart';
-// import 'package:provider/provider.dart';
+import 'package:notepad/helper/file_helper.dart';
+import 'package:notepad/helper/toast_helper.dart';
+import '../helper/db_helper.dart';
+import '../helper/mycolor.dart';
+import '../models/deletedNote.dart';
+import '../models/note.dart';
+import '../widgets/my_drawer.dart';
 
 class TrashScreen extends StatefulWidget {
   @override
@@ -17,7 +17,7 @@ class _TrashScreenState extends State<TrashScreen> {
   List<bool> selectedNote = <bool>[].toList();
   bool selectedIsRunning = false;
   int count = 0;
-  List<DeletedNote> deletedNotesList = [];
+  List<DeletedNote> deletedNotesList = <DeletedNote>[];
   bool _finishGetData = false;
   @override
   void initState() {
@@ -28,7 +28,7 @@ class _TrashScreenState extends State<TrashScreen> {
   Future<void> getDeletedNotesListData() async {
     await DBHelper.dbhelper
         .getAllDeletedNotes()
-        .then((value) => deletedNotesList = value);
+        .then((List<DeletedNote> value) => deletedNotesList = value);
   }
 
   Future<void> deleteNotesAlert(String text, int val) async {
@@ -37,15 +37,7 @@ class _TrashScreenState extends State<TrashScreen> {
       barrierDismissible: true, // !user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          content: val == 4
-              ? Column(
-                  children: [
-                    Text(text),
-                    Divider(),
-                    Text('Select an action for the note:'),
-                  ],
-                )
-              : Text(text),
+          content: Text(text),
           actions: <TextButton>[
             TextButton(
               child: const Text(
@@ -66,9 +58,10 @@ class _TrashScreenState extends State<TrashScreen> {
               onPressed: () {
                 switch (val) {
                   case 0: // restore all the notes
-                    int length = deletedNotesList.length;
+                    final int length = deletedNotesList.length;
                     for (int i = length - 1; i >= 0; i--) {
-                      Note note = Note.fromMap(deletedNotesList[i].toMap());
+                      final Note note =
+                          Note.fromMap(deletedNotesList[i].toMap());
                       DBHelper.dbhelper.createNote(note);
                       DBHelper.dbhelper.deleteNoteForever(deletedNotesList[i]);
                       selectedNote.removeAt(i);
@@ -77,10 +70,12 @@ class _TrashScreenState extends State<TrashScreen> {
                     count = 0;
                     break;
                   case 1: // restoer the selected notes
-                    int length = selectedNote.length;
+                    final int length = selectedNote.length;
                     for (int i = length - 1; i >= 0; i--) {
                       if (selectedNote[i]) {
-                        Note note = Note.fromMap(deletedNotesList[i].toMap());
+                        print(deletedNotesList[i].toMap());
+                        final Note note =
+                            Note.fromMap(deletedNotesList[i].toMap());
                         DBHelper.dbhelper.createNote(note);
                         DBHelper.dbhelper
                             .deleteNoteForever(deletedNotesList[i]);
@@ -91,7 +86,7 @@ class _TrashScreenState extends State<TrashScreen> {
                     }
                     break;
                   case 2: // empty Trash
-                    int length = deletedNotesList.length;
+                    final int length = deletedNotesList.length;
                     for (int i = length - 1; i >= 0; i--) {
                       DBHelper.dbhelper.deleteNoteForever(deletedNotesList[i]);
                       deletedNotesList.removeAt(i);
@@ -101,7 +96,7 @@ class _TrashScreenState extends State<TrashScreen> {
                     break;
 
                   case 3: // delete All notes
-                    int length = selectedNote.length;
+                    final int length = selectedNote.length;
                     for (int i = length - 1; i >= 0; i--) {
                       if (selectedNote[i]) {
                         DBHelper.dbhelper
@@ -140,24 +135,24 @@ class _TrashScreenState extends State<TrashScreen> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Text(
                     "${e.title! == "" ? "Untitled" : e.title!}\n${e.content!.length > 100 ? e.content!.replaceAll('\n', '').substring(0, 100) : e.content!.replaceAll('\n', '')}"),
-                Divider(),
-                Text('Select an action for the note:'),
+                const Divider(),
+                const Text('Select an action for the note:'),
                 ListTile(
-                  title: Text("Undelete"),
+                  title: const Text("Undelete"),
                   onTap: () => setState(() => val = 1),
-                  leading: Radio(
+                  leading: Radio<int>(
                     value: 1,
                     groupValue: val,
                     onChanged: (int? value) => setState(() => val = value!),
                   ),
                 ),
                 ListTile(
-                  title: Text("Delete"),
+                  title: const Text("Delete"),
                   onTap: () => setState(() => val = 2),
-                  leading: Radio(
+                  leading: Radio<int>(
                     value: 2,
                     groupValue: val,
                     onChanged: (int? value) => setState(() => val = value!),
@@ -186,12 +181,10 @@ class _TrashScreenState extends State<TrashScreen> {
               onPressed: () {
                 if (val == 1) {
                   // restore
-                  Note note = Note.fromMap(e.toMap());
+                  final Note note = Note.fromMap(e.toMap());
                   DBHelper.dbhelper.createNote(note);
                   DBHelper.dbhelper.deleteNoteForever(e);
-                  print(deletedNotesList.length);
                   deletedNotesList.remove(e);
-                  print(deletedNotesList.length);
                 } else {
                   // delete
                   DBHelper.dbhelper.deleteNoteForever(e);
@@ -213,17 +206,19 @@ class _TrashScreenState extends State<TrashScreen> {
     //     Provider.of<NoteProvider>(context, listen: false).deletedNotes;
     if (!_finishGetData) {
       getDeletedNotesListData().whenComplete(() {
-        if (!mounted) return;
-        _finishGetData = true;
-        setState(() {});
+        if (mounted) {
+          _finishGetData = true;
+
+          setState(() {});
+        }
       });
     }
     return Scaffold(
       appBar: AppBar(
-        title: selectedIsRunning ? Text('$count') : Text('Trash'),
+        title: selectedIsRunning ? Text('$count') : const Text('Trash'),
         backgroundColor: MyColor.appBarColor,
         actions: selectedIsRunning
-            ? [
+            ? <Widget>[
                 IconButton(
                   tooltip: 'Select all the notes',
                   onPressed: () {
@@ -252,26 +247,26 @@ class _TrashScreenState extends State<TrashScreen> {
                 ),
                 popMenuSelectedItems()
               ]
-            : [
+            : <PopupMenuButton<int>>[
                 popMenuItems(),
               ],
         leading: selectedIsRunning
             ? IconButton(
                 onPressed: () {
                   selectedIsRunning = false;
-                  selectedNote =
-                      List.filled(selectedNote.length, false, growable: true);
+                  selectedNote = List<bool>.filled(selectedNote.length, false,
+                      growable: true);
                   count = 0;
                   setState(() {});
                 },
-                icon: Icon(Icons.arrow_back))
+                icon: const Icon(Icons.arrow_back))
             : Builder(
-                builder: (context) => IconButton(
+                builder: (BuildContext context) => IconButton(
                     onPressed: () {
                       Scaffold.of(context).openDrawer();
                     },
                     tooltip: 'Menu',
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.menu,
                       size: 25,
                       color: Color(0xffffffff),
@@ -281,19 +276,19 @@ class _TrashScreenState extends State<TrashScreen> {
       drawer: MyDrawer(),
       backgroundColor: MyColor.backgroundScaffold,
       body: !_finishGetData
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : SingleChildScrollView(
               child: Column(
                 children: deletedNotesList
                     .asMap()
-                    .map((i, e) {
+                    .map((int i, DeletedNote e) {
                       while (deletedNotesList.length > selectedNote.length) {
                         selectedNote.insert(0, false);
                       }
 
-                      return MapEntry(
+                      return MapEntry<int, Card>(
                         i,
                         Card(
                           elevation: 0,
@@ -301,7 +296,7 @@ class _TrashScreenState extends State<TrashScreen> {
                             height: 70,
                             decoration: BoxDecoration(
                               borderRadius:
-                                  new BorderRadius.all(Radius.circular(10)),
+                                  const BorderRadius.all(Radius.circular(10)),
                               border: Border.all(
                                 color: Colors.black,
                               ),
@@ -314,10 +309,11 @@ class _TrashScreenState extends State<TrashScreen> {
                                   "${e.title! == "" ? "Untitled" : e.title!}"),
                               subtitle: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
+                                children: <Widget>[
                                   Text(
                                     "Last edit: ${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
-                                    style: TextStyle(color: Color(0xff000000)),
+                                    style: const TextStyle(
+                                        color: Color(0xff000000)),
                                   ),
                                 ],
                               ),
@@ -357,20 +353,32 @@ class _TrashScreenState extends State<TrashScreen> {
     );
   }
 
-  Widget popMenuItems() {
-    return PopupMenuButton(
-      child: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext bc) => [
-        PopupMenuItem(child: Text("Undelete all"), value: 0),
-        PopupMenuItem(child: Text("Export notes to text files"), value: 1),
-        PopupMenuItem(child: Text("Empty Trash"), value: 2),
+  PopupMenuButton<int> popMenuItems() {
+    return PopupMenuButton<int>(
+      child: const Icon(Icons.more_vert),
+      itemBuilder: (BuildContext bc) => <PopupMenuEntry<int>>[
+        const PopupMenuItem<int>(child: Text("Undelete all"), value: 0),
+        const PopupMenuItem<int>(
+            child: Text("Export notes to text files"), value: 1),
+        const PopupMenuItem<int>(child: Text("Empty Trash"), value: 2),
       ],
-      onSelected: (value) {
+      onSelected: (int value) async {
         switch (value) {
           case 0:
             deleteNotesAlert("Restore all notes", 0);
             break;
           case 1:
+            for (int i = 0; i < deletedNotesList.length; i++) {
+              await FileHelper.files.writeInFile(
+                  deletedNotesList[i].title == ""
+                      ? "Untitled"
+                      : deletedNotesList[i].title!,
+                  deletedNotesList[i].title! +
+                      "::" +
+                      deletedNotesList[i].content!);
+            }
+
+            ToastHelper.flutterToast("The file(s) was exported");
             break;
           case 2:
             deleteNotesAlert(
@@ -384,13 +392,14 @@ class _TrashScreenState extends State<TrashScreen> {
   }
 
   Widget popMenuSelectedItems() {
-    return PopupMenuButton(
-      child: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext bc) => [
-        PopupMenuItem(child: Text("Export notes to text files"), value: 0),
-        PopupMenuItem(child: Text("Delete"), value: 1),
+    return PopupMenuButton<int>(
+      child: const Icon(Icons.more_vert),
+      itemBuilder: (BuildContext bc) => <PopupMenuEntry<int>>[
+        const PopupMenuItem<int>(
+            child: Text("Export notes to text files"), value: 0),
+        const PopupMenuItem<int>(child: Text("Delete"), value: 1),
       ],
-      onSelected: (value) {
+      onSelected: (int value) {
         switch (value) {
           case 0:
             break;

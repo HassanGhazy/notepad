@@ -1,30 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:notepad/helper/app_router.dart';
-import 'package:notepad/helper/db_helper.dart';
-import 'package:notepad/helper/mycolor.dart';
-import 'package:notepad/models/Category.dart';
-import 'package:notepad/models/deletedNote.dart';
-import 'package:notepad/models/note.dart';
-import 'package:notepad/widgets/my_drawer.dart';
+import 'package:notepad/helper/shared_preference_helper.dart';
+import '../helper/app_router.dart';
+import '../helper/db_helper.dart';
+import '../helper/mycolor.dart';
+import '../models/Category.dart';
+import '../models/deletedNote.dart';
+import '../models/note.dart';
+import '../widgets/my_drawer.dart';
 
 class OneCategoryNotesScreen extends StatefulWidget {
+  const OneCategoryNotesScreen(this.text);
   final String text;
-  OneCategoryNotesScreen(this.text);
   @override
   _OneCategoryNotesScreenState createState() => _OneCategoryNotesScreenState();
 }
 
 class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
-  List<Note> notesList = [];
+  List<Note> notesList = <Note>[];
   List<bool> selectedNote = <bool>[].toList();
   bool selectedIsRunning = false;
   int count = 0;
-  List<Category> categoryList = [];
+  List<Category> categoryList = <Category>[];
   bool _finishGetDataCategories = false;
   bool _finishGetDataNotes = false;
   Future<void> getNotesData() async {
-    DBHelper.dbhelper.findNotes(widget.text).then((value) => notesList = value);
+    DBHelper.dbhelper
+        .findNotes(widget.text)
+        .then((List<Note> value) => notesList = value);
   }
 
   @override
@@ -35,24 +38,28 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
   }
 
   Future<void> getCategoryData() async {
-    DBHelper.dbhelper.getAllCategories().then((value) => categoryList = value);
+    DBHelper.dbhelper
+        .getAllCategories()
+        .then((List<Category> value) => categoryList = value);
   }
 
   @override
   Widget build(BuildContext context) {
     if (!_finishGetDataNotes) {
       getNotesData().whenComplete(() {
-        if (!mounted) return;
-        _finishGetDataNotes = true;
-        setState(() {});
+        if (mounted) {
+          _finishGetDataNotes = true;
+          setState(() {});
+        }
       });
     }
     if (!_finishGetDataCategories) {
       getCategoryData().whenComplete(() {
-        if (!mounted) return;
-        _finishGetDataCategories = true;
+        if (mounted) {
+          _finishGetDataCategories = true;
 
-        setState(() {});
+          setState(() {});
+        }
       });
     }
     return Scaffold(
@@ -60,7 +67,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
         onPressed: () {
           AppRouter.route.replacmentRoute('/add-note');
         },
-        backgroundColor: Color(0xff796A41),
+        backgroundColor: const Color(0xff796A41),
         child: const Icon(
           Icons.add,
         ),
@@ -68,7 +75,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
       appBar: AppBar(
         backgroundColor: MyColor.appBarColor,
         actions: selectedIsRunning
-            ? [
+            ? <Widget>[
                 IconButton(
                   tooltip: 'Select all the notes',
                   onPressed: () {
@@ -97,27 +104,27 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                 ),
                 popMenuItemsSelected()
               ]
-            : [
+            : <PopupMenuButton<int>>[
                 popMenuItems(),
               ],
-        title: selectedIsRunning ? Text('$count') : Text('NotePad'),
+        title: selectedIsRunning ? Text('$count') : const Text('NotePad'),
         leading: selectedIsRunning
             ? IconButton(
                 onPressed: () {
                   selectedIsRunning = false;
-                  selectedNote =
-                      List.filled(selectedNote.length, false, growable: true);
+                  selectedNote = List<bool>.filled(selectedNote.length, false,
+                      growable: true);
                   count = 0;
                   setState(() {});
                 },
-                icon: Icon(Icons.arrow_back))
+                icon: const Icon(Icons.arrow_back))
             : Builder(
-                builder: (context) => IconButton(
+                builder: (BuildContext context) => IconButton(
                     onPressed: () {
                       Scaffold.of(context).openDrawer();
                     },
                     tooltip: 'Menu',
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.menu,
                       size: 25,
                       color: Color(0xffffffff),
@@ -130,13 +137,13 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
         child: Column(
           children: notesList
               .asMap()
-              .map((i, e) {
+              .map((int i, Note e) {
                 while (notesList.length > selectedNote.length) {
                   selectedNote.insert(0, false);
                 }
-                List<String> categoryNumber = e.cat!.split(',');
+                final List<String> categoryNumber = e.cat!.split(',');
                 String categorySplittedString = "";
-                categoryNumber.removeWhere((element) => element == "");
+                categoryNumber.removeWhere((String element) => element == "");
                 if (categoryNumber.length > 1) {
                   categorySplittedString =
                       categoryNumber[0] + "," + categoryNumber[1];
@@ -151,14 +158,15 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                   categorySplittedString = e.cat!;
                 }
 
-                return MapEntry(
+                return MapEntry<int, Card>(
                   i,
                   Card(
                     elevation: 0,
                     child: Container(
                       height: 60,
                       decoration: BoxDecoration(
-                        borderRadius: new BorderRadius.all(Radius.circular(10)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
                         border: Border.all(
                           color: Colors.black,
                         ),
@@ -171,10 +179,10 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                             Text("${e.title! == "" ? "Untitled" : e.title!}"),
                         subtitle: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                          children: <Widget>[
                             Text(
                               "$categorySplittedString",
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Color(0xff000000), fontSize: 13),
                               textAlign: TextAlign.center,
                             ),
@@ -182,7 +190,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                               padding: const EdgeInsets.only(bottom: 7),
                               child: Text(
                                 "Last edit: ${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Color(0xff000000), fontSize: 13),
                               ),
                             ),
@@ -198,11 +206,15 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                             }
                             setState(() {});
                           } else {
-                            AppRouter.route.pushNamed('/add-note', {
+                            print(e.dateCreation);
+                            print(e.dateEdition);
+                            AppRouter.route
+                                .pushNamed('/add-note', <String, dynamic>{
                               'id': '${e.id}',
                               'title': '${e.title}',
                               'content': '${e.content}',
-                              'dateUpdate': '${e.dateEdition}',
+                              'dateEdition': '${e.dateEdition}',
+                              'dateCreation': '${e.dateCreation}',
                             });
                           }
                         },
@@ -228,15 +240,16 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
     );
   }
 
-  Widget popMenuItems() {
-    return PopupMenuButton(
-      child: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext bc) => [
-        PopupMenuItem(child: Text("Select all notes"), value: 0),
-        PopupMenuItem(child: Text("Import Text Files"), value: 1),
-        PopupMenuItem(child: Text("Export notes to text files"), value: 2),
+  PopupMenuButton<int> popMenuItems() {
+    return PopupMenuButton<int>(
+      child: const Icon(Icons.more_vert),
+      itemBuilder: (BuildContext bc) => <PopupMenuEntry<int>>[
+        const PopupMenuItem<int>(child: Text("Select all notes"), value: 0),
+        const PopupMenuItem<int>(child: Text("Import Text Files"), value: 1),
+        const PopupMenuItem<int>(
+            child: Text("Export notes to text files"), value: 2),
       ],
-      onSelected: (value) {
+      onSelected: (int value) {
         switch (value) {
           case 0:
             selectedIsRunning = true;
@@ -257,13 +270,14 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
   }
 
   Widget popMenuItemsSelected() {
-    return PopupMenuButton(
-      child: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext bc) => [
-        PopupMenuItem(child: Text("Export notes to text files"), value: 0),
-        PopupMenuItem(child: Text("Categories"), value: 1),
+    return PopupMenuButton<int>(
+      child: const Icon(Icons.more_vert),
+      itemBuilder: (BuildContext bc) => <PopupMenuEntry<int>>[
+        const PopupMenuItem<int>(
+            child: Text("Export notes to text files"), value: 0),
+        const PopupMenuItem<int>(child: Text("Categories"), value: 1),
       ],
-      onSelected: (value) {
+      onSelected: (int value) {
         switch (value) {
           case 0:
             break;
@@ -283,23 +297,23 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         List<bool> isCheck = <bool>[];
-        isCheck = List.filled(categoryList.length, false);
+        isCheck = List<bool>.filled(categoryList.length, false);
         return AlertDialog(
           title: const Text('Select category'),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return !_finishGetDataCategories
-                  ? Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : SingleChildScrollView(
                       child: Column(
                         children: categoryList
                             .asMap()
                             .map(
-                              (i, e) {
-                                return MapEntry(
+                              (int i, Category e) {
+                                return MapEntry<int, Column>(
                                   i,
                                   Column(
-                                    children: [
+                                    children: <Widget>[
                                       CheckboxListTile(
                                         value: isCheck[i],
                                         onChanged: (bool? value) {
@@ -309,7 +323,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                                         title: Text("${e.nameCat}"),
                                         dense: true,
                                       ),
-                                      Divider(color: MyColor.textColor)
+                                      const Divider(color: MyColor.textColor)
                                     ],
                                   ),
                                 );
@@ -380,7 +394,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          content: Text("Delete the selected notes?"),
+          content: const Text("Delete the selected notes?"),
           actions: <TextButton>[
             TextButton(
               child: const Text(
@@ -399,13 +413,18 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
               ),
               onPressed: () {
-                int length = selectedNote.length;
+                final int length = selectedNote.length;
                 for (int i = length - 1; i >= 0; i--) {
                   if (selectedNote[i]) {
-                    DeletedNote deletedNote =
+                    final DeletedNote deletedNote =
                         DeletedNote.fromMap(notesList[i].toMap());
-
-                    DBHelper.dbhelper.createDeletedNote(deletedNote);
+                    bool moveDeletedToTrash = SharedPreferenceHelper
+                            .sharedPreference
+                            .getBoolData("moveDeletedToTrash") ??
+                        true;
+                    if (moveDeletedToTrash) {
+                      DBHelper.dbhelper.createDeletedNote(deletedNote);
+                    }
 
                     selectedNote.removeAt(i);
                     DBHelper.dbhelper.deleteNote(notesList[i]);

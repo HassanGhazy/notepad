@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:notepad/helper/shared_preference_helper.dart';
-// import 'package:notepad/provider/note_provider.dart';
-import 'package:notepad/screens/backup.dart';
-import 'package:notepad/screens/one_category_notes_screen.dart';
-import 'package:notepad/screens/trach_screen.dart';
-// import 'package:provider/provider.dart';
+import '../helper/mycolor.dart';
+import '../screens/setting.dart';
+import '../helper/shared_preference_helper.dart';
+import '../screens/backup.dart';
+import '../screens/one_category_notes_screen.dart';
+import '../screens/trach_screen.dart';
 import '../helper/db_helper.dart';
 import '../helper/app_router.dart';
-import 'screens/category_screen.dart';
-import './screens/note_screen.dart';
-import './screens/home.dart';
+import '../screens/category_screen.dart';
+import '../screens/note_screen.dart';
+import '../screens/home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,17 +22,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'NotePad',
+      title: 'Notepad',
       debugShowCheckedModeBanner: false,
       home: Home(),
+      color: MyColor.appBarColor,
       navigatorKey: AppRouter.route.navKey,
       routes: {
-        '/home': (ctx) => Home(),
-        '/add-note': (ctx) => NoteScreen(),
-        '/add-categorie': (ctx) => CategoryScreen(),
-        '/backup': (ctx) => BackUp(),
-        '/trash': (ctx) => TrashScreen(),
-        '/one-category': (ctx) => OneCategoryNotesScreen(""),
+        '/home': (_) => Home(),
+        '/add-note': (_) => NoteScreen(),
+        '/add-categorie': (_) => CategoryScreen(),
+        '/backup': (_) => BackUp(),
+        '/trash': (_) => TrashScreen(),
+        '/one-category': (_) => const OneCategoryNotesScreen(""),
+        '/setting': (_) => Setting(),
       },
     );
   }

@@ -1,22 +1,21 @@
-import 'package:notepad/helper/db_helper.dart';
+import '../helper/db_helper.dart';
 
 class Category {
-  int? idCat;
-  String? nameCat;
   Category({
     this.idCat,
     required this.nameCat,
   });
-
-  toMap() {
-    return {
-      DBHelper.idColumnName: this.idCat,
-      DBHelper.nameCatColumnName: this.nameCat,
-    };
+  Category.fromMap(Map<String, dynamic> map) {
+    idCat = map[DBHelper.idColumnName] as int;
+    nameCat = map[DBHelper.nameCatColumnName] as String;
   }
+  int? idCat;
+  String? nameCat;
 
-  Category.fromMap(Map map) {
-    this.idCat = map[DBHelper.idColumnName];
-    this.nameCat = map[DBHelper.nameCatColumnName];
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      DBHelper.idColumnName: idCat,
+      DBHelper.nameCatColumnName: nameCat,
+    };
   }
 }

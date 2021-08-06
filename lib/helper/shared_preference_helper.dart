@@ -23,4 +23,12 @@ class SharedPreferenceHelper {
   int? getIntData(String key) {
     return prefs!.getInt(key);
   }
+
+  Future<void> saveBoolData(String name, bool value) async {
+    await prefs!.setBool(name, value);
+  }
+
+  bool? getBoolData(String key) {
+    return prefs!.getBool(key);
+  }
 }

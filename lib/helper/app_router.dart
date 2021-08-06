@@ -6,15 +6,15 @@ class AppRouter {
   static AppRouter route = AppRouter._();
   GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
-  pushNamed(String routeName, Map<String, dynamic>? arguments) {
+  void pushNamed(String routeName, Map<String, dynamic>? arguments) {
     navKey.currentState!.pushNamed(routeName, arguments: arguments!);
   }
 
-  replacmentRoute(String routeName) {
+  void replacmentRoute(String routeName) {
     navKey.currentState!.pushReplacementNamed(routeName);
   }
 
-  replacmentRouteWithArgs(String routeName, Object args) {
+  void replacmentRouteWithArgs(String routeName, Object args) {
     navKey.currentState!.pushReplacementNamed(routeName, arguments: args);
   }
 }

@@ -1,6 +1,8 @@
 import 'dart:io';
 
-import 'package:notepad/models/deletedNote.dart';
+import 'package:notepad/helper/toast_helper.dart';
+
+import '../models/deletedNote.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../models/Category.dart';
@@ -14,30 +16,30 @@ class DBHelper {
   DBHelper._();
   static DBHelper dbhelper = DBHelper._();
   Database? database;
-  static const idColumnName = 'id';
-  static const nameCatColumnName = 'nameCat';
-  static const titleColumnName = 'title';
-  static const contentColumnName = 'content';
-  static const dateEditionColumnName = 'dateEdition';
-  static const dateCreationColumnName = 'dateCreation';
-  static const catColumnName = 'cat';
-  static const tableNameNote = 'Note';
-  static const tableNameCategory = 'Category';
-  static const tableNameDeletedNote = 'DeletedNote';
-  static const databaseName = 'notes.db';
-  static const SECRET_KEY = "KEY BACKUP HASAN";
+  static const String idColumnName = 'id';
+  static const String nameCatColumnName = 'nameCat';
+  static const String titleColumnName = 'title';
+  static const String contentColumnName = 'content';
+  static const String dateEditionColumnName = 'dateEdition';
+  static const String dateCreationColumnName = 'dateCreation';
+  static const String catColumnName = 'cat';
+  static const String tableNameNote = 'Note';
+  static const String tableNameCategory = 'Category';
+  static const String tableNameDeletedNote = 'DeletedNote';
+  static const String databaseName = 'notes.db';
+  static const String SECRET_KEY = "KEY BACKUP HASAN";
 
   Future<void> initDataBase() async {
     database = await getDatabase();
   }
 
   Future<Database> getDatabase() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    String filePath = join(directory.path, databaseName);
-    Database databases = await openDatabase(
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String filePath = join(directory.path, databaseName);
+    final Database databases = await openDatabase(
       filePath,
       version: 1,
-      onCreate: (db, version) {
+      onCreate: (Database db, int version) {
         db.execute(
             '''create table $tableNameNote ($idColumnName INTEGER primary key autoincrement, $titleColumnName Text, $contentColumnName Text, $dateEditionColumnName Text , $catColumnName Text ,$dateCreationColumnName Text)''');
         db.execute(
@@ -51,88 +53,99 @@ class DBHelper {
 
   Future<void> clearAllTables() async {
     try {
-      var dbs = this.database;
-      await dbs!.delete(tableNameNote);
+      final Database dbs = database!;
+      await dbs.delete(tableNameNote);
       await dbs
           .rawQuery("DELETE FROM sqlite_sequence where name='$tableNameNote'");
 
       print('------ CLEAR ALL TABLE');
-    } catch (e) {}
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> createNote(Note note) async {
-    await database?.insert(tableNameNote, note.toMap());
+    await database?.insert(tableNameNote, note.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> createCategory(Category category) async {
-    await database?.insert(tableNameCategory, category.toMap());
+    await database?.insert(tableNameCategory, category.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> createDeletedNote(DeletedNote deletedNote) async {
-    await database?.insert(tableNameDeletedNote, deletedNote.toMap());
+    await database?.insert(tableNameDeletedNote, deletedNote.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<List<Note>> getAllNotes() async {
-    List<Map<String?, Object?>> res = await database!.query(tableNameNote);
-    List<Note> notes = res.map((e) => Note.fromMap(e)).toList();
+    final List<Map<String?, Object?>> res =
+        await database!.query(tableNameNote);
+    final List<Note> notes =
+        res.map((Map<String?, dynamic> e) => Note.fromMap(e)).toList();
     return notes;
   }
 
   Future<List<Note>> findNotes(String text) async {
-    List<Map<String?, Object?>> res = await database!.rawQuery(
+    final List<Map<String?, dynamic>> res = await database!.rawQuery(
         "SELECT * FROM $tableNameNote WHERE $catColumnName LIKE '%$text%'");
-    List<Note> notes = res.map((e) => Note.fromMap(e)).toList();
+    final List<Note> notes =
+        res.map((Map<String?, dynamic> e) => Note.fromMap(e)).toList();
     return notes;
   }
 
   Future<List<Category>> getAllCategories() async {
-    List<Map<String, Object?>> res = await database!.query(tableNameCategory);
-    List<Category> categories = res.map((e) => Category.fromMap(e)).toList();
+    final List<Map<String, Object?>> res =
+        await database!.query(tableNameCategory);
+    final List<Category> categories =
+        res.map((Map<String, dynamic> e) => Category.fromMap(e)).toList();
     return categories;
   }
 
   Future<List<DeletedNote>> getAllDeletedNotes() async {
-    List<Map<String?, Object?>> res =
+    final List<Map<String?, Object?>> res =
         await database!.query(tableNameDeletedNote);
-    List<DeletedNote> deletedNote =
-        res.map((e) => DeletedNote.fromMap(e)).toList();
+    final List<DeletedNote> deletedNote =
+        res.map((Map<String?, dynamic> e) => DeletedNote.fromMap(e)).toList();
     return deletedNote;
   }
 
   Future<void> deleteCategory(Category cat) async {
     if (cat.idCat == null) {
       await database?.delete(tableNameCategory,
-          where: 'nameCat=?', whereArgs: ['${cat.nameCat}']);
+          where: 'nameCat=?', whereArgs: <Object>['${cat.nameCat}']);
     } else {
       await database?.delete(tableNameCategory,
-          where: 'id=?', whereArgs: ['${cat.idCat}']);
+          where: 'id=?', whereArgs: <Object>['${cat.idCat}']);
     }
   }
 
   Future<void> deleteNote(Note note) async {
-    await database
-        ?.delete(tableNameNote, where: 'id=?', whereArgs: ['${note.id}']);
+    await database?.delete(tableNameNote,
+        where: 'id=?', whereArgs: <Object>['${note.id}']);
   }
 
   Future<void> deleteNoteForever(DeletedNote deletedNote) async {
     await database?.delete(tableNameDeletedNote,
-        where: 'id=?', whereArgs: ['${deletedNote.id}']);
+        where: 'id=?', whereArgs: <Object>['${deletedNote.id}']);
   }
 
   Future<void> updateNote(Note note) async {
     await database?.update(tableNameNote, note.toMap(),
-        where: 'id=?', whereArgs: [note.id]);
+        where: 'id=?', whereArgs: <int>[note.id!]);
   }
 
   Future<void> updateCategory(Category cat) async {
     await database?.update(tableNameCategory, cat.toMap(),
-        where: 'id=?', whereArgs: [cat.idCat]);
+        where: 'id=?', whereArgs: <int>[cat.idCat!]);
   }
 
   Future<String> generateBackup({bool isEncrypted = true}) async {
-    List<Map<String, dynamic>> listMaps = await database!.query(tableNameNote);
+    final List<Map<String, dynamic>> listMaps =
+        await database!.query(tableNameNote);
 
-    String json = convert.jsonEncode(listMaps);
+    final String json = convert.jsonEncode(listMaps);
 
     if (isEncrypted) {
       var key = encrypt.Key.fromUtf8(SECRET_KEY);
@@ -146,18 +159,25 @@ class DBHelper {
   }
 
   Future<void> restoreBackup(String backup, {bool isEncrypted = true}) async {
-    Batch batch = database!.batch();
+    final Batch batch = database!.batch();
 
     var key = encrypt.Key.fromUtf8(SECRET_KEY);
     var iv = encrypt.IV.fromLength(16);
     var encrypter = encrypt.Encrypter(encrypt.AES(key));
 
-    List<dynamic> json = convert
+    final List<dynamic> json = convert
         .jsonDecode(isEncrypted ? encrypter.decrypt64(backup, iv: iv) : backup);
 
     for (int i = 0; i < json.length; i++) {
       batch.insert('$tableNameNote', json[i]);
     }
-    await batch.commit(continueOnError: false, noResult: true);
+    try {
+      await batch.commit(continueOnError: false, noResult: true);
+      ToastHelper.flutterToast("The data was restored");
+    } catch (error) {
+      if (error.toString().contains("UNIQUE constraint failed")) {
+        ToastHelper.flutterToast("Some of data already exist");
+      }
+    }
   }
 }

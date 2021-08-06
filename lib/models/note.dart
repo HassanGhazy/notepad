@@ -1,13 +1,6 @@
-import 'package:notepad/helper/db_helper.dart';
+import '../helper/db_helper.dart';
 
 class Note {
-  int? id;
-  String? title;
-  String? content;
-  String? dateEdition;
-  String? dateCreation;
-  String? cat;
-
   Note({
     this.id,
     required this.title,
@@ -16,24 +9,29 @@ class Note {
     this.dateCreation,
     this.cat,
   });
-
-  toMap() {
-    return {
-      DBHelper.idColumnName: this.id,
-      DBHelper.titleColumnName: this.title,
-      DBHelper.contentColumnName: this.content,
-      DBHelper.dateEditionColumnName: this.dateEdition,
-      DBHelper.dateCreationColumnName: this.dateCreation,
-      DBHelper.catColumnName: this.cat,
-    };
+  Note.fromMap(Map<String?, dynamic> map) {
+    id = map[DBHelper.idColumnName] as int;
+    title = map[DBHelper.titleColumnName] as String;
+    content = map[DBHelper.contentColumnName] as String;
+    dateEdition = map[DBHelper.dateEditionColumnName] as String;
+    dateCreation = map[DBHelper.dateCreationColumnName] as String;
+    cat = map[DBHelper.catColumnName] as String;
   }
+  int? id;
+  String? title;
+  String? content;
+  String? dateEdition;
+  String? dateCreation;
+  String? cat;
 
-  Note.fromMap(Map map) {
-    this.id = map[DBHelper.idColumnName];
-    this.title = map[DBHelper.titleColumnName];
-    this.content = map[DBHelper.contentColumnName];
-    this.dateEdition = map[DBHelper.dateEditionColumnName];
-    this.dateCreation = map[DBHelper.dateCreationColumnName];
-    this.cat = map[DBHelper.catColumnName];
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      DBHelper.idColumnName: id,
+      DBHelper.titleColumnName: title,
+      DBHelper.contentColumnName: content,
+      DBHelper.dateEditionColumnName: dateEdition,
+      DBHelper.dateCreationColumnName: dateCreation,
+      DBHelper.catColumnName: cat,
+    };
   }
 }

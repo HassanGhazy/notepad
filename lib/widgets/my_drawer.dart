@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:notepad/helper/app_router.dart';
-import 'package:notepad/helper/db_helper.dart';
-import 'package:notepad/helper/mycolor.dart';
-import 'package:notepad/models/Category.dart';
-import 'package:notepad/screens/one_category_notes_screen.dart';
-import 'package:notepad/widgets/my_text.dart';
+import 'package:notepad/helper/list_tile.dart';
+import 'package:notepad/helper/luncher_helper.dart';
+import '../helper/app_router.dart';
+import '../helper/db_helper.dart';
+import '../helper/mycolor.dart';
+import '../models/Category.dart';
+import '../screens/one_category_notes_screen.dart';
+import '../widgets/my_text.dart';
 
 class MyDrawer extends StatefulWidget {
   @override
@@ -12,7 +14,7 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-  List<Category> categoryList = [];
+  List<Category> categoryList = <Category>[];
   bool _finishGetData = false;
 
   @override
@@ -22,16 +24,19 @@ class _MyDrawerState extends State<MyDrawer> {
   }
 
   Future<void> getCategoryData() async {
-    DBHelper.dbhelper.getAllCategories().then((value) => categoryList = value);
+    DBHelper.dbhelper
+        .getAllCategories()
+        .then((List<Category> value) => categoryList = value);
   }
 
   @override
   Widget build(BuildContext context) {
     if (!_finishGetData) {
       getCategoryData().whenComplete(() {
-        if (!mounted) return;
-        _finishGetData = true;
-        setState(() {});
+        if (mounted) {
+          _finishGetData = true;
+          setState(() {});
+        }
       });
     }
     return Drawer(
@@ -39,25 +44,25 @@ class _MyDrawerState extends State<MyDrawer> {
         color: const Color(0xffFFFFDD),
         child: SingleChildScrollView(
           child: Column(
-            children: [
+            children: <Widget>[
               Container(
                 width: double.infinity,
                 height: 50,
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
+                child: const Padding(
+                  padding: EdgeInsets.all(15),
                   child: Text(
                     "NotePad",
                     style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xffffffff)),
+                        color: Color(0xffffffff)),
                   ),
                 ),
                 color: const Color(0xff927855),
               ),
               ListTile(
-                title: MyText("Notes"),
-                leading: Icon(Icons.note),
+                title: const MyText("Notes"),
+                leading: const Icon(Icons.note),
                 onTap: () {
                   if (ModalRoute.of(context)!.settings.name == '/' ||
                       ModalRoute.of(context)!.settings.name == '/home') {
@@ -67,26 +72,26 @@ class _MyDrawerState extends State<MyDrawer> {
                   }
                 },
               ),
-              Divider(
+              const Divider(
                 color: MyColor.middleLineDrawer,
                 thickness: 2,
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
                 child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Categories",
-                      style: TextStyle(color: const Color(0xff777777)),
+                      style: TextStyle(color: Color(0xff777777)),
                     )),
               ),
               Column(
                 children: categoryList
-                    .map((e) => ListTile(
+                    .map((Category e) => ListTile(
                           title: Text(e.nameCat!),
-                          leading: Icon(
+                          leading: const Icon(
                             Icons.label,
-                            color: const Color(0xff747565),
+                            color: Color(0xff747565),
                           ),
                           onTap: () {
                             Navigator.of(context).pushReplacement(
@@ -99,67 +104,23 @@ class _MyDrawerState extends State<MyDrawer> {
                         ))
                     .toList(),
               ),
+              MyListTile(
+                  "Edit Categories", Icons.playlist_add, '/add-categorie'),
+              const Divider(color: MyColor.middleLineDrawer, thickness: 2),
+              MyListTile("Backup", Icons.storage, '/backup'),
+              MyListTile("Trash", Icons.delete, '/trash'),
+              const Divider(color: MyColor.middleLineDrawer, thickness: 2),
+              MyListTile("Setting", Icons.settings, '/setting'),
+              MyListTile("Rate The App", Icons.rate_review, '/'), // check route
+              MyListTile("Help", Icons.help, '/'), // check route
+
               ListTile(
-                title: MyText("Edit Categories"),
-                leading: Icon(Icons.playlist_add),
+                title: const MyText("Privacy Policy"),
+                leading: const Icon(Icons.collections),
                 onTap: () {
-                  if (ModalRoute.of(context)!.settings.name ==
-                      '/add-categorie') {
-                    Navigator.of(context).pop();
-                  } else {
-                    AppRouter.route.replacmentRoute('/add-categorie');
-                  }
+                  LauncherHelper.launcher.openWebPage(
+                      "https://docs.google.com/document/d/1Irv9J70PnafXkBnI-9E_XHMCI_3DfuEzqESLfgQ_DEY/edit?usp=sharing");
                 },
-              ),
-              Divider(
-                color: MyColor.middleLineDrawer,
-                thickness: 2,
-              ),
-              ListTile(
-                title: MyText("Backup"),
-                leading: Icon(Icons.storage),
-                onTap: () {
-                  if (ModalRoute.of(context)!.settings.name == '/backup') {
-                    Navigator.of(context).pop();
-                  } else {
-                    AppRouter.route.replacmentRoute('/backup');
-                  }
-                },
-              ),
-              ListTile(
-                title: MyText("Trash"),
-                leading: Icon(Icons.delete),
-                onTap: () {
-                  if (ModalRoute.of(context)!.settings.name == '/trash') {
-                    Navigator.of(context).pop();
-                  } else {
-                    AppRouter.route.replacmentRoute('/trash');
-                  }
-                },
-              ),
-              Divider(
-                color: MyColor.middleLineDrawer,
-                thickness: 2,
-              ),
-              ListTile(
-                title: MyText("Setting"),
-                leading: Icon(Icons.settings),
-                onTap: () {},
-              ),
-              ListTile(
-                title: MyText("Rate The App"),
-                leading: Icon(Icons.rate_review),
-                onTap: () {},
-              ),
-              ListTile(
-                title: MyText("Help"),
-                leading: Icon(Icons.help),
-                onTap: () {},
-              ),
-              ListTile(
-                title: MyText("Privacy Policy"),
-                leading: Icon(Icons.collections),
-                onTap: () {},
               ),
             ],
           ),

@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:notepad/helper/db_helper.dart';
-import 'package:notepad/helper/mycolor.dart';
-import 'package:notepad/helper/file_helper.dart';
-import 'package:notepad/widgets/my_drawer.dart';
-import 'package:notepad/widgets/my_text.dart';
+import 'package:notepad/helper/toast_helper.dart';
+import '../helper/db_helper.dart';
+import '../helper/mycolor.dart';
+import '../helper/file_helper.dart';
+import '../widgets/my_drawer.dart';
+import '../widgets/my_text.dart';
 
 class BackUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Backup"),
+        title: const Text("Backup"),
         backgroundColor: MyColor.appBarColor,
       ),
       backgroundColor: MyColor.backgroundScaffold,
       drawer: MyDrawer(),
       body: Column(
-        children: [
+        children: <Widget>[
           TextButton(
             onPressed: () {},
             child: Container(
               height: 60,
               decoration: BoxDecoration(
-                borderRadius: new BorderRadius.all(Radius.circular(10)),
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
                 border: Border.all(
                   color: MyColor.appBarColor,
                 ),
                 gradient: MyColor.containerColorWithoutSelected,
               ),
-              child: Center(
+              child: const Center(
                 child: MyText("SHOW INSTRUCTIONS"),
               ),
             ),
@@ -40,7 +41,7 @@ class BackUp extends StatelessWidget {
                 width: double.infinity,
                 decoration: MyColor.containerDercoration,
                 child: Column(
-                  children: [
+                  children: <Widget>[
                     const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text(
@@ -48,27 +49,29 @@ class BackUp extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () async {
-                        String data = await DBHelper.dbhelper.generateBackup();
+                        final String data =
+                            await DBHelper.dbhelper.generateBackup();
                         FileHelper.files.writeInFile('backup', data);
+                        ToastHelper.flutterToast("The backup was saved");
                       },
                       child: Container(
                         height: 60,
                         decoration: BoxDecoration(
                           borderRadius:
-                              new BorderRadius.all(Radius.circular(10)),
+                              const BorderRadius.all(Radius.circular(10)),
                           border: Border.all(
                             color: MyColor.appBarColor,
                           ),
                           gradient: MyColor.containerColorWithoutSelected,
                         ),
-                        child: Center(
+                        child: const Center(
                           child: MyText("SAVE A BACKUP TO A FILE"),
                         ),
                       ),
                     ),
                     TextButton(
                       onPressed: () async {
-                        String backup =
+                        final String backup =
                             await FileHelper.files.readFromFile('backup');
                         DBHelper.dbhelper.restoreBackup(backup);
                       },
@@ -76,13 +79,13 @@ class BackUp extends StatelessWidget {
                         height: 60,
                         decoration: BoxDecoration(
                           borderRadius:
-                              new BorderRadius.all(Radius.circular(10)),
+                              const BorderRadius.all(Radius.circular(10)),
                           border: Border.all(
                             color: MyColor.appBarColor,
                           ),
                           gradient: MyColor.containerColorWithoutSelected,
                         ),
-                        child: Center(
+                        child: const Center(
                           child: MyText("LOAD NOTES FROM A BACKUP FILE"),
                         ),
                       ),
