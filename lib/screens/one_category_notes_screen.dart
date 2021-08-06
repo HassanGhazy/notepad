@@ -5,7 +5,7 @@ import '../helper/app_router.dart';
 import '../helper/db_helper.dart';
 import '../helper/mycolor.dart';
 import '../models/Category.dart';
-import '../models/deletedNote.dart';
+
 import '../models/note.dart';
 import '../widgets/my_drawer.dart';
 
@@ -416,8 +416,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                 final int length = selectedNote.length;
                 for (int i = length - 1; i >= 0; i--) {
                   if (selectedNote[i]) {
-                    final DeletedNote deletedNote =
-                        DeletedNote.fromMap(notesList[i].toMap());
+                    final Note deletedNote = Note.fromMap(notesList[i].toMap());
                     bool moveDeletedToTrash = SharedPreferenceHelper
                             .sharedPreference
                             .getBoolData("moveDeletedToTrash") ??

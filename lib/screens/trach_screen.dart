@@ -4,7 +4,7 @@ import 'package:notepad/helper/file_helper.dart';
 import 'package:notepad/helper/toast_helper.dart';
 import '../helper/db_helper.dart';
 import '../helper/mycolor.dart';
-import '../models/deletedNote.dart';
+
 import '../models/note.dart';
 import '../widgets/my_drawer.dart';
 
@@ -17,7 +17,7 @@ class _TrashScreenState extends State<TrashScreen> {
   List<bool> selectedNote = <bool>[].toList();
   bool selectedIsRunning = false;
   int count = 0;
-  List<DeletedNote> deletedNotesList = <DeletedNote>[];
+  List<Note> deletedNotesList = <Note>[];
   bool _finishGetData = false;
   @override
   void initState() {
@@ -28,7 +28,7 @@ class _TrashScreenState extends State<TrashScreen> {
   Future<void> getDeletedNotesListData() async {
     await DBHelper.dbhelper
         .getAllDeletedNotes()
-        .then((List<DeletedNote> value) => deletedNotesList = value);
+        .then((List<Note> value) => deletedNotesList = value);
   }
 
   Future<void> deleteNotesAlert(String text, int val) async {
@@ -122,7 +122,7 @@ class _TrashScreenState extends State<TrashScreen> {
     );
   }
 
-  Future<void> alertSpecficNote(DeletedNote e) async {
+  Future<void> alertSpecficNote(Note e) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true, // !user must tap button!
@@ -283,7 +283,7 @@ class _TrashScreenState extends State<TrashScreen> {
               child: Column(
                 children: deletedNotesList
                     .asMap()
-                    .map((int i, DeletedNote e) {
+                    .map((int i, Note e) {
                       while (deletedNotesList.length > selectedNote.length) {
                         selectedNote.insert(0, false);
                       }

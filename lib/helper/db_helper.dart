@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:notepad/helper/toast_helper.dart';
 
-import '../models/deletedNote.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../models/Category.dart';
@@ -74,7 +73,7 @@ class DBHelper {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> createDeletedNote(DeletedNote deletedNote) async {
+  Future<void> createDeletedNote(Note deletedNote) async {
     await database?.insert(tableNameDeletedNote, deletedNote.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
@@ -103,11 +102,11 @@ class DBHelper {
     return categories;
   }
 
-  Future<List<DeletedNote>> getAllDeletedNotes() async {
+  Future<List<Note>> getAllDeletedNotes() async {
     final List<Map<String?, Object?>> res =
         await database!.query(tableNameDeletedNote);
-    final List<DeletedNote> deletedNote =
-        res.map((Map<String?, dynamic> e) => DeletedNote.fromMap(e)).toList();
+    final List<Note> deletedNote =
+        res.map((Map<String?, dynamic> e) => Note.fromMap(e)).toList();
     return deletedNote;
   }
 
@@ -126,7 +125,7 @@ class DBHelper {
         where: 'id=?', whereArgs: <Object>['${note.id}']);
   }
 
-  Future<void> deleteNoteForever(DeletedNote deletedNote) async {
+  Future<void> deleteNoteForever(Note deletedNote) async {
     await database?.delete(tableNameDeletedNote,
         where: 'id=?', whereArgs: <Object>['${deletedNote.id}']);
   }

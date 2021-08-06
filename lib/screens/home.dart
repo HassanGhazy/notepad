@@ -6,7 +6,7 @@ import '../helper/db_helper.dart';
 import '../helper/mycolor.dart';
 import '../helper/shared_preference_helper.dart';
 import '../models/Category.dart';
-import '../models/deletedNote.dart';
+
 import '../models/note.dart';
 import '../widgets/my_drawer.dart';
 
@@ -351,8 +351,8 @@ class _HomeState extends State<Home> {
                 for (int i = length - 1; i >= 0; i--) {
                   if (selectedNote[i]) {
                     if (moveDeletedToTrash) {
-                      final DeletedNote deletedNote =
-                          DeletedNote.fromMap(notesList[i].toMap());
+                      final Note deletedNote =
+                          Note.fromMap(notesList[i].toMap());
 
                       DBHelper.dbhelper.createDeletedNote(deletedNote);
                     }

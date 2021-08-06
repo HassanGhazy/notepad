@@ -4,7 +4,7 @@ import '../helper/mycolor.dart';
 import '../helper/shared_preference_helper.dart';
 import '../helper/toast_helper.dart';
 import '../models/Category.dart';
-import '../models/deletedNote.dart';
+
 import '../widgets/nestedPopupMenuItem.dart';
 import '../helper/app_router.dart';
 import '../helper/db_helper.dart';
@@ -533,7 +533,7 @@ class _NoteScreenState extends State<NoteScreen> {
               ),
               onPressed: () {
                 if (id != -1) {
-                  DeletedNote dn = DeletedNote(
+                  Note dn = Note(
                       id: id,
                       title: title,
                       content: content,
@@ -558,7 +558,7 @@ class _NoteScreenState extends State<NoteScreen> {
                   Navigator.of(context).pop();
                   AppRouter.route.replacmentRoute('/home');
                 } else {
-                  DeletedNote dn = DeletedNote(
+                  Note dn = Note(
                       title: title == "" ? "Untitled" : title,
                       content: content,
                       dateEdition: DateTime.now().toString(),

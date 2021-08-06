@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notepad/helper/list_tile.dart';
+import 'package:notepad/widgets/my_list_tile.dart';
 import 'package:notepad/helper/luncher_helper.dart';
 import '../helper/app_router.dart';
 import '../helper/db_helper.dart';
@@ -116,7 +116,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
               ListTile(
                 title: const MyText("Privacy Policy"),
-                leading: const Icon(Icons.collections),
+                leading: const Icon(Icons.copy_all),
                 onTap: () {
                   LauncherHelper.launcher.openWebPage(
                       "https://docs.google.com/document/d/1Irv9J70PnafXkBnI-9E_XHMCI_3DfuEzqESLfgQ_DEY/edit?usp=sharing");

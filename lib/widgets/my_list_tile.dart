@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/my_text.dart';
+import 'my_text.dart';
 
-import 'app_router.dart';
+import '../helper/app_router.dart';
 
 class MyListTile extends StatelessWidget {
   MyListTile(this.title, this.icon, this.routeName);
