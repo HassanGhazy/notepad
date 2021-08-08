@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:notepad/helper/shared_preference_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+import '../helper/shared_preference_helper.dart';
 import '../helper/app_router.dart';
 import '../helper/db_helper.dart';
 import '../helper/mycolor.dart';
 import '../models/Category.dart';
-
 import '../models/note.dart';
 import '../widgets/my_drawer.dart';
 
@@ -77,7 +78,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
         actions: selectedIsRunning
             ? <Widget>[
                 IconButton(
-                  tooltip: 'Select all the notes',
+                  tooltip: 'Select all the notes'.tr(),
                   onPressed: () {
                     for (int i = 0; i < selectedNote.length; i++) {
                       selectedNote[i] = true;
@@ -95,7 +96,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                   onPressed: () {
                     deleteAlert(context);
                   },
-                  tooltip: 'Delete',
+                  tooltip: 'Delete'.tr(),
                   icon: const Icon(
                     Icons.delete,
                     color: Color(0xffffffff),
@@ -107,7 +108,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
             : <PopupMenuButton<int>>[
                 popMenuItems(),
               ],
-        title: selectedIsRunning ? Text('$count') : const Text('NotePad'),
+        title: selectedIsRunning ? Text('$count') : const Text('NotePad').tr(),
         leading: selectedIsRunning
             ? IconButton(
                 onPressed: () {
@@ -123,7 +124,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                     onPressed: () {
                       Scaffold.of(context).openDrawer();
                     },
-                    tooltip: 'Menu',
+                    tooltip: 'Menu'.tr(),
                     icon: const Icon(
                       Icons.menu,
                       size: 25,
@@ -175,8 +176,8 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                             : MyColor.containerColorWithoutSelected,
                       ),
                       child: ListTile(
-                        title:
-                            Text("${e.title! == "" ? "Untitled" : e.title!}"),
+                        title: Text(
+                            "${e.title! == "" ? "Untitled".tr() : e.title!}"),
                         subtitle: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -189,7 +190,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 7),
                               child: Text(
-                                "Last edit: ${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
+                                "${"Last edit:".tr()}${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
                                 style: const TextStyle(
                                     color: Color(0xff000000), fontSize: 13),
                               ),
@@ -244,10 +245,10 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
     return PopupMenuButton<int>(
       child: const Icon(Icons.more_vert),
       itemBuilder: (BuildContext bc) => <PopupMenuEntry<int>>[
-        const PopupMenuItem<int>(child: Text("Select all notes"), value: 0),
-        const PopupMenuItem<int>(child: Text("Import Text Files"), value: 1),
-        const PopupMenuItem<int>(
-            child: Text("Export notes to text files"), value: 2),
+        PopupMenuItem<int>(child: Text("Select all notes").tr(), value: 0),
+        PopupMenuItem<int>(child: Text("Import Text Files").tr(), value: 1),
+        PopupMenuItem<int>(
+            child: Text("Export notes to text files").tr(), value: 2),
       ],
       onSelected: (int value) {
         switch (value) {
@@ -273,9 +274,9 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
     return PopupMenuButton<int>(
       child: const Icon(Icons.more_vert),
       itemBuilder: (BuildContext bc) => <PopupMenuEntry<int>>[
-        const PopupMenuItem<int>(
-            child: Text("Export notes to text files"), value: 0),
-        const PopupMenuItem<int>(child: Text("Categories"), value: 1),
+        PopupMenuItem<int>(
+            child: Text("Export notes to text files").tr(), value: 0),
+        PopupMenuItem<int>(child: Text("Categories").tr(), value: 1),
       ],
       onSelected: (int value) {
         switch (value) {
@@ -299,7 +300,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
         List<bool> isCheck = <bool>[];
         isCheck = List<bool>.filled(categoryList.length, false);
         return AlertDialog(
-          title: const Text('Select category'),
+          title: const Text('Select category').tr(),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return !_finishGetDataCategories
@@ -323,7 +324,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                                         title: Text("${e.nameCat}"),
                                         dense: true,
                                       ),
-                                      const Divider(color: MyColor.textColor)
+                                      Divider(color: MyColor.textColor)
                                     ],
                                   ),
                                 );
@@ -337,21 +338,21 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text(
+              child: Text(
                 'Cancel',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text(
+              child: Text(
                 'OK',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 for (int i = 0; i < isCheck.length; i++) {
                   if (isCheck[i]) {
@@ -394,20 +395,20 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          content: const Text("Delete the selected notes?"),
+          content: const Text("Delete the selected notes?").tr(),
           actions: <TextButton>[
             TextButton(
-              child: const Text(
+              child: Text(
                 'CANCEL',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text(
+              child: Text(
                 'OK',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),

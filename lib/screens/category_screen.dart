@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../helper/mycolor.dart';
 import '../helper/db_helper.dart';
 import '../models/Category.dart';
@@ -43,12 +44,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Edit Categorie'),
+          title: const Text('Edit Categorie').tr(),
           content: TextFormField(
             controller: _changetitleCategoryController,
             maxLines: 1,
-            decoration: const InputDecoration(
-              hintText: 'edit category name',
+            decoration: InputDecoration(
+              hintText: 'edit category name'.tr(),
               hintStyle: TextStyle(fontSize: 18, color: Colors.grey),
             ),
             onFieldSubmitted: (_) {
@@ -57,7 +58,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Approve'),
+              child: const Text('Approve').tr(),
               onPressed: () async {
                 if (_changetitleCategoryController.text != "") {
                   final int index = categoryList.indexOf(cat);
@@ -84,24 +85,24 @@ class _CategoryScreenState extends State<CategoryScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           content: Text(
-              "Delete category '${e.nameCat}'? Notes from the category won't be deleted"),
+              "${"Delete category".tr()} '${e.nameCat}'? ${"Notes from the category won't be deleted".tr()}"),
           actions: <TextButton>[
             TextButton(
-              child: const Text(
+              child: Text(
                 'CANCEL',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text(
+              child: Text(
                 'OK',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 final int index = categoryList.indexOf(e);
                 categoryList.removeAt(index);
@@ -130,7 +131,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Categories"),
+        title: const Text("Categories").tr(),
         backgroundColor: const Color(0xff907854),
       ),
       backgroundColor: const Color(0xffFDFCCE),
@@ -149,8 +150,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       child: TextFormField(
                         controller: _titleCategoryController,
                         maxLines: 1,
-                        decoration: const InputDecoration(
-                          hintText: 'New category name',
+                        decoration: InputDecoration(
+                          hintText: 'New category name'.tr(),
                           hintStyle:
                               TextStyle(fontSize: 18, color: Colors.grey),
                         ),
@@ -215,7 +216,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         child: const Text(
                           'Add',
                           style: TextStyle(color: Colors.black),
-                        ),
+                        ).tr(),
                       ),
                     )
                   ],

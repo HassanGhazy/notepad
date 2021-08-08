@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../helper/mycolor.dart';
 import '../screens/setting.dart';
@@ -15,18 +16,33 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DBHelper.dbhelper.initDataBase();
   await SharedPreferenceHelper.sharedPreference.initSharedPreferences();
-  runApp(MyApp());
+  await EasyLocalization.ensureInitialized();
+  int _language =
+      SharedPreferenceHelper.sharedPreference.getIntData("language") ?? 1;
+
+  runApp(
+    EasyLocalization(
+        supportedLocales: [Locale('en'), Locale('ar')],
+        path: 'assets/translations',
+        fallbackLocale: Locale('en'),
+        child: MyApp(_language)),
+  );
 }
 
 class MyApp extends StatelessWidget {
+  final int local;
+  MyApp(this.local);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Notepad',
+      title: 'Notepad'.tr(),
       debugShowCheckedModeBanner: false,
       home: Home(),
       color: MyColor.appBarColor,
       navigatorKey: AppRouter.route.navKey,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: const <Locale>[Locale('en'), Locale('ar')],
+      locale: context.locale,
       routes: {
         '/home': (_) => Home(),
         '/add-note': (_) => NoteScreen(),

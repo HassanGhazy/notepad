@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:notepad/helper/file_helper.dart';
-import 'package:notepad/helper/toast_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
+import '../helper/file_helper.dart';
+import '../helper/toast_helper.dart';
 import '../helper/db_helper.dart';
 import '../helper/mycolor.dart';
 
@@ -40,21 +41,21 @@ class _TrashScreenState extends State<TrashScreen> {
           content: Text(text),
           actions: <TextButton>[
             TextButton(
-              child: const Text(
+              child: Text(
                 'CANCEL',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text(
+              child: Text(
                 'OK',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 switch (val) {
                   case 0: // restore all the notes
@@ -137,11 +138,11 @@ class _TrashScreenState extends State<TrashScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                    "${e.title! == "" ? "Untitled" : e.title!}\n${e.content!.length > 100 ? e.content!.replaceAll('\n', '').substring(0, 100) : e.content!.replaceAll('\n', '')}"),
+                    "${e.title! == "" ? "Untitled".tr() : e.title!}\n${e.content!.length > 100 ? e.content!.replaceAll('\n', '').substring(0, 100) : e.content!.replaceAll('\n', '')}"),
                 const Divider(),
-                const Text('Select an action for the note:'),
+                const Text('Select an action for the note:').tr(),
                 ListTile(
-                  title: const Text("Undelete"),
+                  title: const Text("Undelete").tr(),
                   onTap: () => setState(() => val = 1),
                   leading: Radio<int>(
                     value: 1,
@@ -150,7 +151,7 @@ class _TrashScreenState extends State<TrashScreen> {
                   ),
                 ),
                 ListTile(
-                  title: const Text("Delete"),
+                  title: const Text("Delete").tr(),
                   onTap: () => setState(() => val = 2),
                   leading: Radio<int>(
                     value: 2,
@@ -163,21 +164,21 @@ class _TrashScreenState extends State<TrashScreen> {
           }),
           actions: <TextButton>[
             TextButton(
-              child: const Text(
+              child: Text(
                 'CANCEL',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text(
+              child: Text(
                 'OK',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 if (val == 1) {
                   // restore
@@ -215,12 +216,12 @@ class _TrashScreenState extends State<TrashScreen> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: selectedIsRunning ? Text('$count') : const Text('Trash'),
+        title: selectedIsRunning ? Text('$count') : const Text('Trash').tr(),
         backgroundColor: MyColor.appBarColor,
         actions: selectedIsRunning
             ? <Widget>[
                 IconButton(
-                  tooltip: 'Select all the notes',
+                  tooltip: 'Select all the notes'.tr(),
                   onPressed: () {
                     for (int i = 0; i < selectedNote.length; i++) {
                       selectedNote[i] = true;
@@ -236,9 +237,9 @@ class _TrashScreenState extends State<TrashScreen> {
                 ),
                 IconButton(
                   onPressed: () {
-                    deleteNotesAlert("Restore the selected notes?", 1);
+                    deleteNotesAlert("Restore the selected notes?".tr(), 1);
                   },
-                  tooltip: 'Undelete',
+                  tooltip: 'Undelete'.tr(),
                   icon: const Icon(
                     Icons.delete_sweep,
                     color: Color(0xffffffff),
@@ -265,7 +266,7 @@ class _TrashScreenState extends State<TrashScreen> {
                     onPressed: () {
                       Scaffold.of(context).openDrawer();
                     },
-                    tooltip: 'Menu',
+                    tooltip: 'Menu'.tr(),
                     icon: const Icon(
                       Icons.menu,
                       size: 25,
@@ -306,12 +307,12 @@ class _TrashScreenState extends State<TrashScreen> {
                             ),
                             child: ListTile(
                               title: Text(
-                                  "${e.title! == "" ? "Untitled" : e.title!}"),
+                                  "${e.title! == "" ? "Untitled".tr() : e.title!}"),
                               subtitle: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
                                   Text(
-                                    "Last edit: ${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
+                                    "${"Last edit:".tr()}${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
                                     style: const TextStyle(
                                         color: Color(0xff000000)),
                                   ),
@@ -357,21 +358,21 @@ class _TrashScreenState extends State<TrashScreen> {
     return PopupMenuButton<int>(
       child: const Icon(Icons.more_vert),
       itemBuilder: (BuildContext bc) => <PopupMenuEntry<int>>[
-        const PopupMenuItem<int>(child: Text("Undelete all"), value: 0),
-        const PopupMenuItem<int>(
-            child: Text("Export notes to text files"), value: 1),
-        const PopupMenuItem<int>(child: Text("Empty Trash"), value: 2),
+        PopupMenuItem<int>(child: Text("Undelete all").tr(), value: 0),
+        PopupMenuItem<int>(
+            child: Text("Export notes to text files").tr(), value: 1),
+        PopupMenuItem<int>(child: Text("Empty Trash").tr(), value: 2),
       ],
       onSelected: (int value) async {
         switch (value) {
           case 0:
-            deleteNotesAlert("Restore all notes", 0);
+            deleteNotesAlert("Restore all notes".tr(), 0);
             break;
           case 1:
             for (int i = 0; i < deletedNotesList.length; i++) {
               await FileHelper.files.writeInFile(
                   deletedNotesList[i].title == ""
-                      ? "Untitled"
+                      ? "Untitled".tr()
                       : deletedNotesList[i].title!,
                   deletedNotesList[i].title! +
                       "::" +
@@ -382,7 +383,8 @@ class _TrashScreenState extends State<TrashScreen> {
             break;
           case 2:
             deleteNotesAlert(
-                "All trashed notes will be deleted permanently. Are you sure that you want to delete all of the trashed notes?",
+                "All trashed notes will be deleted permanently. Are you sure that you want to delete all of the trashed notes?"
+                    .tr(),
                 2);
             break;
           default:
@@ -395,9 +397,9 @@ class _TrashScreenState extends State<TrashScreen> {
     return PopupMenuButton<int>(
       child: const Icon(Icons.more_vert),
       itemBuilder: (BuildContext bc) => <PopupMenuEntry<int>>[
-        const PopupMenuItem<int>(
-            child: Text("Export notes to text files"), value: 0),
-        const PopupMenuItem<int>(child: Text("Delete"), value: 1),
+        PopupMenuItem<int>(
+            child: Text("Export notes to text files").tr(), value: 0),
+        PopupMenuItem<int>(child: Text("Delete").tr(), value: 1),
       ],
       onSelected: (int value) {
         switch (value) {
@@ -405,7 +407,8 @@ class _TrashScreenState extends State<TrashScreen> {
             break;
           case 1:
             deleteNotesAlert(
-                "Are you sure that you want to delete the selected notes? the notes will be deleted permanently.",
+                "Are you sure that you want to delete the selected notes? the notes will be deleted permanently."
+                    .tr(),
                 3);
             break;
 

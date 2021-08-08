@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notepad/helper/luncher_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class NestedPopupMenuItem extends StatelessWidget {
   @override
@@ -8,7 +9,7 @@ class NestedPopupMenuItem extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Share"),
+          Text("Share").tr(),
           Icon(
             Icons.arrow_forward,
             color: Colors.black,
@@ -19,8 +20,8 @@ class NestedPopupMenuItem extends StatelessWidget {
         PopupMenuItem<int>(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const <Widget>[
-                const Text("By Email"),
+              children: <Widget>[
+                const Text("By Email").tr(),
                 const Icon(
                   Icons.email,
                   color: Colors.black,
@@ -31,8 +32,8 @@ class NestedPopupMenuItem extends StatelessWidget {
         PopupMenuItem<int>(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const <Widget>[
-                const Text("By Telegram"),
+              children: <Widget>[
+                const Text("By Telegram").tr(),
                 const Icon(
                   Icons.near_me,
                   color: Colors.black,
@@ -43,8 +44,8 @@ class NestedPopupMenuItem extends StatelessWidget {
         PopupMenuItem<int>(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const <Widget>[
-                const Text("By SMS"),
+              children: <Widget>[
+                const Text("By SMS").tr(),
                 const Icon(
                   Icons.sms,
                   color: Colors.black,

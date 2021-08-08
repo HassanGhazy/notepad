@@ -8,8 +8,8 @@ class MyText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text!,
-      style: const TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 15, color: MyColor.blackcolor),
+      style: TextStyle(
+          fontWeight: FontWeight.bold, fontSize: 15, color: MyColor.textColor),
     );
   }
 }

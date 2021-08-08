@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:notepad/widgets/my_list_tile.dart';
-import 'package:notepad/helper/luncher_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
+import '../widgets/my_list_tile.dart';
+import '../helper/luncher_helper.dart';
 import '../helper/app_router.dart';
 import '../helper/db_helper.dart';
 import '../helper/mycolor.dart';
@@ -41,27 +42,27 @@ class _MyDrawerState extends State<MyDrawer> {
     }
     return Drawer(
       child: Container(
-        color: const Color(0xffFFFFDD),
+        color: MyColor.backgroundDrawer,
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               Container(
                 width: double.infinity,
                 height: 50,
-                child: const Padding(
+                child: Padding(
                   padding: EdgeInsets.all(15),
                   child: Text(
                     "NotePad",
                     style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xffffffff)),
-                  ),
+                        color: MyColor.textappBarColor),
+                  ).tr(),
                 ),
-                color: const Color(0xff927855),
+                color: MyColor.topDrawer,
               ),
               ListTile(
-                title: const MyText("Notes"),
+                title: MyText("Notes".tr()),
                 leading: const Icon(Icons.note),
                 onTap: () {
                   if (ModalRoute.of(context)!.settings.name == '/' ||
@@ -76,14 +77,17 @@ class _MyDrawerState extends State<MyDrawer> {
                 color: MyColor.middleLineDrawer,
                 thickness: 2,
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Categories",
-                      style: TextStyle(color: Color(0xff777777)),
-                    )),
+                  alignment: Directionality.of(context).index == 0
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
+                  child: Text(
+                    "Categories",
+                    style: TextStyle(color: Color(0xff777777)),
+                  ).tr(),
+                ),
               ),
               Column(
                 children: categoryList
@@ -105,17 +109,24 @@ class _MyDrawerState extends State<MyDrawer> {
                     .toList(),
               ),
               MyListTile(
-                  "Edit Categories", Icons.playlist_add, '/add-categorie'),
+                  "Edit Categories".tr(), Icons.playlist_add, '/add-categorie'),
               const Divider(color: MyColor.middleLineDrawer, thickness: 2),
-              MyListTile("Backup", Icons.storage, '/backup'),
-              MyListTile("Trash", Icons.delete, '/trash'),
+              MyListTile("Backup".tr(), Icons.storage, '/backup'),
+              MyListTile("Trash".tr(), Icons.delete, '/trash'),
               const Divider(color: MyColor.middleLineDrawer, thickness: 2),
-              MyListTile("Setting", Icons.settings, '/setting'),
-              MyListTile("Rate The App", Icons.rate_review, '/'), // check route
-              MyListTile("Help", Icons.help, '/'), // check route
-
+              MyListTile("Setting".tr(), Icons.settings, '/setting'),
+              MyListTile(
+                  "Rate The App".tr(), Icons.rate_review, '/'), // check route
               ListTile(
-                title: const MyText("Privacy Policy"),
+                title: MyText("Help".tr()),
+                leading: const Icon(Icons.help),
+                onTap: () {
+                  LauncherHelper.launcher
+                      .openWebPage("https://atomczak.com/notepad/help");
+                },
+              ),
+              ListTile(
+                title: MyText("Privacy Policy".tr()),
                 leading: const Icon(Icons.copy_all),
                 onTap: () {
                   LauncherHelper.launcher.openWebPage(

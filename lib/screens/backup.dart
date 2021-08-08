@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:notepad/helper/toast_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
+import '../helper/toast_helper.dart';
 import '../helper/db_helper.dart';
 import '../helper/mycolor.dart';
 import '../helper/file_helper.dart';
@@ -11,7 +12,7 @@ class BackUp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Backup"),
+        title: const Text("Backup").tr(),
         backgroundColor: MyColor.appBarColor,
       ),
       backgroundColor: MyColor.backgroundScaffold,
@@ -29,8 +30,8 @@ class BackUp extends StatelessWidget {
                 ),
                 gradient: MyColor.containerColorWithoutSelected,
               ),
-              child: const Center(
-                child: MyText("SHOW INSTRUCTIONS"),
+              child: Center(
+                child: MyText("SHOW INSTRUCTIONS".tr()),
               ),
             ),
           ),
@@ -42,10 +43,11 @@ class BackUp extends StatelessWidget {
                 decoration: MyColor.containerDercoration,
                 child: Column(
                   children: <Widget>[
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text(
-                          'A backup copy is a file containing copy of each note (except deleted notes in the "Trach" folder). it can be used to make copy of notes outside the device, or to transfer notes to another device. Categories are not included in a backup copy file.'),
+                              'A backup copy is a file containing copy of each note (except deleted notes in the "Trach" folder). it can be used to make copy of notes outside the device, or to transfer notes to another device. Categories are not included in a backup copy file.')
+                          .tr(),
                     ),
                     TextButton(
                       onPressed: () async {
@@ -64,8 +66,8 @@ class BackUp extends StatelessWidget {
                           ),
                           gradient: MyColor.containerColorWithoutSelected,
                         ),
-                        child: const Center(
-                          child: MyText("SAVE A BACKUP TO A FILE"),
+                        child: Center(
+                          child: MyText("SAVE A BACKUP TO A FILE".tr()),
                         ),
                       ),
                     ),
@@ -85,8 +87,8 @@ class BackUp extends StatelessWidget {
                           ),
                           gradient: MyColor.containerColorWithoutSelected,
                         ),
-                        child: const Center(
-                          child: MyText("LOAD NOTES FROM A BACKUP FILE"),
+                        child: Center(
+                          child: MyText("LOAD NOTES FROM A BACKUP FILE".tr()),
                         ),
                       ),
                     ),

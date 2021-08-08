@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:notepad/helper/file_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:notepad/helper/toast_helper.dart';
+import '../helper/file_helper.dart';
 import '../helper/app_router.dart';
 import '../helper/db_helper.dart';
 import '../helper/mycolor.dart';
@@ -67,14 +69,14 @@ class _HomeState extends State<Home> {
                 2;
 
         return AlertDialog(
-          title: const Text('Sort By'),
+          title: const Text('Sort By').tr(),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return SingleChildScrollView(
                 child: Column(
                   children: <ListTile>[
                     ListTile(
-                      title: const Text("Edit date from oldest"),
+                      title: const Text("Edit date from oldest").tr(),
                       onTap: () => setState(() => val = 1),
                       leading: Radio<int>(
                         value: 1,
@@ -83,7 +85,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     ListTile(
-                      title: const Text("Edit date from newest"),
+                      title: const Text("Edit date from newest").tr(),
                       onTap: () => setState(() => val = 2),
                       leading: Radio<int>(
                         value: 2,
@@ -92,7 +94,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     ListTile(
-                      title: const Text("Title: A to Z"),
+                      title: const Text("Title: A to Z").tr(),
                       onTap: () => setState(() => val = 3),
                       leading: Radio<int>(
                         value: 3,
@@ -101,7 +103,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     ListTile(
-                      title: const Text("Title: Z to A"),
+                      title: const Text("Title: Z to A").tr(),
                       onTap: () => setState(() => val = 4),
                       leading: Radio<int>(
                         value: 4,
@@ -110,7 +112,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     ListTile(
-                      title: const Text("Creation date from oldest"),
+                      title: const Text("Creation date from oldest").tr(),
                       onTap: () => setState(() => val = 5),
                       leading: Radio<int>(
                         value: 5,
@@ -119,7 +121,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     ListTile(
-                      title: const Text("Creation date from newest"),
+                      title: const Text("Creation date from newest").tr(),
                       onTap: () => setState(() => val = 6),
                       leading: Radio<int>(
                         value: 6,
@@ -134,13 +136,13 @@ class _HomeState extends State<Home> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: const Text('Cancel').tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Sort'),
+              child: const Text('Sort').tr(),
               onPressed: () {
                 sortListMethod(val);
                 setState(() {});
@@ -199,7 +201,7 @@ class _HomeState extends State<Home> {
         List<bool> isCheck = <bool>[];
         isCheck = List<bool>.filled(categoryList.length, false);
         return AlertDialog(
-          title: const Text('Select category'),
+          title: const Text('Select category').tr(),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return !_finishGetDataCategories
@@ -223,7 +225,7 @@ class _HomeState extends State<Home> {
                                         title: Text("${e.nameCat}"),
                                         dense: true,
                                       ),
-                                      const Divider(color: MyColor.textColor)
+                                      Divider(color: MyColor.textColor)
                                     ],
                                   ),
                                 );
@@ -237,21 +239,21 @@ class _HomeState extends State<Home> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text(
+              child: Text(
                 'Cancel',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text(
+              child: Text(
                 'OK',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 for (int i = 0; i < isCheck.length; i++) {
                   if (isCheck[i]) {
@@ -293,9 +295,9 @@ class _HomeState extends State<Home> {
     return PopupMenuButton<int>(
       child: const Icon(Icons.more_vert),
       itemBuilder: (BuildContext bc) => <PopupMenuEntry<int>>[
-        const PopupMenuItem<int>(
-            child: Text("Export notes to text files"), value: 0),
-        const PopupMenuItem<int>(child: Text("Categories"), value: 1),
+        PopupMenuItem<int>(
+            child: Text("Export notes to text files").tr(), value: 0),
+        PopupMenuItem<int>(child: Text("Categories").tr(), value: 1),
       ],
       onSelected: (int value) {
         switch (value) {
@@ -303,10 +305,13 @@ class _HomeState extends State<Home> {
             for (int i = 0; i < selectedNote.length; i++) {
               if (selectedNote[i]) {
                 FileHelper.files.writeInFile(
-                    notesList[i].title == "" ? "Untitled" : notesList[i].title!,
+                    notesList[i].title == ""
+                        ? "Untitled".tr()
+                        : notesList[i].title!,
                     notesList[i].title! + ":" + notesList[i].content!);
               }
             }
+            ToastHelper.flutterToast("The file(s) was exported");
             break;
           case 1:
             addCategoriesToNotes();
@@ -324,24 +329,24 @@ class _HomeState extends State<Home> {
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          content: const Text("Delete the selected notes?"),
+          content: const Text("Delete the selected notes?").tr(),
           actions: <TextButton>[
             TextButton(
-              child: const Text(
+              child: Text(
                 'CANCEL',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text(
+              child: Text(
                 'OK',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 bool moveDeletedToTrash = SharedPreferenceHelper
                         .sharedPreference
@@ -412,7 +417,7 @@ class _HomeState extends State<Home> {
         actions: selectedIsRunning
             ? <Widget>[
                 IconButton(
-                  tooltip: 'Select all the notes',
+                  tooltip: 'Select all the notes'.tr(),
                   onPressed: () {
                     for (int i = 0; i < selectedNote.length; i++) {
                       selectedNote[i] = true;
@@ -430,7 +435,7 @@ class _HomeState extends State<Home> {
                   onPressed: () {
                     deleteAlert(context);
                   },
-                  tooltip: 'Delete',
+                  tooltip: 'Delete'.tr(),
                   icon: const Icon(
                     Icons.delete,
                     color: Color(0xffffffff),
@@ -461,7 +466,7 @@ class _HomeState extends State<Home> {
                   child: const Text(
                     'Sort',
                     style: TextStyle(fontSize: 18, color: Color(0xffffffff)),
-                  ),
+                  ).tr(),
                 ),
                 popMenuItems(),
               ],
@@ -469,7 +474,7 @@ class _HomeState extends State<Home> {
             ? Text('$count')
             : _enableSearch
                 ? searchWidet()
-                : const Text('Notepad'),
+                : const Text('Notepad').tr(),
         leading: selectedIsRunning || _enableSearch
             ? IconButton(
                 onPressed: () {
@@ -489,7 +494,7 @@ class _HomeState extends State<Home> {
                     onPressed: () {
                       Scaffold.of(context).openDrawer();
                     },
-                    tooltip: 'Menu',
+                    tooltip: 'Menu'.tr(),
                     icon: const Icon(
                       Icons.menu,
                       size: 25,
@@ -547,7 +552,7 @@ class _HomeState extends State<Home> {
                             ),
                             child: ListTile(
                               title: Text(
-                                  "${e.title! == "" ? "Untitled" : e.title!}"),
+                                  "${e.title! == "" ? "Untitled".tr() : e.title!}"),
                               subtitle: !_showingCategories
                                   ? Container()
                                   : Row(
@@ -565,7 +570,7 @@ class _HomeState extends State<Home> {
                                           padding:
                                               const EdgeInsets.only(bottom: 7),
                                           child: Text(
-                                            "Last edit: ${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
+                                            "${"Last edit:".tr()}${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
                                             style: const TextStyle(
                                                 color: Color(0xff000000),
                                                 fontSize: 13),
@@ -619,10 +624,10 @@ class _HomeState extends State<Home> {
     return PopupMenuButton<int>(
       child: const Icon(Icons.more_vert),
       itemBuilder: (BuildContext bc) => <PopupMenuEntry<int>>[
-        const PopupMenuItem<int>(child: Text("Select all notes"), value: 0),
-        const PopupMenuItem<int>(child: Text("Import Text Files"), value: 1),
-        const PopupMenuItem<int>(
-            child: Text("Export notes to text files"), value: 2),
+        PopupMenuItem<int>(child: Text("Select all notes").tr(), value: 0),
+        PopupMenuItem<int>(child: Text("Import Text Files").tr(), value: 1),
+        PopupMenuItem<int>(
+            child: Text("Export notes to text files").tr(), value: 2),
       ],
       onSelected: (int value) {
         switch (value) {
@@ -639,9 +644,12 @@ class _HomeState extends State<Home> {
           case 2:
             for (int i = 0; i < notesList.length; i++) {
               FileHelper.files.writeInFile(
-                  notesList[i].title == "" ? "Untitled" : notesList[i].title!,
+                  notesList[i].title == ""
+                      ? "Untitled".tr()
+                      : notesList[i].title!,
                   notesList[i].title! + ":" + notesList[i].content!);
             }
+            ToastHelper.flutterToast("The file(s) was exported");
             break;
           default:
         }

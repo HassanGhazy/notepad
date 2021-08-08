@@ -4,15 +4,26 @@ class MyColor {
   MyColor._();
   static MyColor colors = MyColor._();
 
-  static const Color appBarColor = Color(0xff937654);
-  static const Color backgroundScaffold = Color(0xffFFFFDD);
-  static const Color blackcolor = Color(0xff000000);
-  static const Color textColor = Color(0xff7D7159);
-  static const Color middleLineDrawer = Color(0xffEDEDCB);
-  static const Color backgroundToast = Color(0xff666666);
-  static const Color white = Color(0xffffffff);
-  static const Color material = Color(0xff283136);
-  static const Color switchColor = Color(0xff7A6D4B);
+  static const Color blackcolor = const Color(0xff000000);
+  static const Color middleLineDrawer = const Color(0xffEDEDCB);
+  static const Color backgroundToast = const Color(0xff666666);
+  static const Color white = const Color(0xffffffff);
+
+  static Color appBarColor = const Color(0xff937654);
+  static Color textappBarColor = const Color(0xffffffff);
+  static Color backgroundScaffold = const Color(0xffFFFFDD);
+  static Color textColor = const Color(0xff000000);
+  static Color switchColor = const Color(0xff7A6D4B);
+  static Color topDrawer = const Color(0xff927855);
+  static Color backgroundDrawer = const Color(0xffFFFFDD);
+
+  void appBarColorSet(Color c) => appBarColor = c;
+  void backgroundScaffoldSet(Color c) => backgroundScaffold = c;
+  void textColorSet(Color c) => textColor = c;
+  void switchColorSet(Color c) => switchColor = c;
+  void topDrawerSet(Color c) => topDrawer = c;
+  void backgroundDrawerSet(Color c) => backgroundDrawer = c;
+  void textappBarColorSet(Color c) => backgroundDrawer = c;
 
   static BoxDecoration containerDercoration = BoxDecoration(
     borderRadius: const BorderRadius.all(Radius.circular(10)),

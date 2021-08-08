@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../helper/file_helper.dart';
 import '../helper/mycolor.dart';
 import '../helper/shared_preference_helper.dart';
@@ -40,6 +41,7 @@ class _NoteScreenState extends State<NoteScreen> {
   bool _droppingData = false;
   bool _readMode = false;
   bool _drawLines = false;
+  bool firstTime = true;
 
   @override
   void initState() {
@@ -123,8 +125,8 @@ class _NoteScreenState extends State<NoteScreen> {
         dateEdition: DateTime.now().toString(),
         cat: cat,
       );
-
       DBHelper.dbhelper.createNote(note);
+
       if (showToast) ToastHelper.flutterToast("The note was saved");
     }
 
@@ -185,10 +187,10 @@ class _NoteScreenState extends State<NoteScreen> {
         child: const Text(
           'Save',
           style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
-        ),
+        ).tr(),
       ),
       if (_contentController.text.isEmpty)
-        const Padding(
+        Padding(
           padding: EdgeInsets.all(8.0),
           child: Align(
             alignment: Alignment.center,
@@ -198,7 +200,7 @@ class _NoteScreenState extends State<NoteScreen> {
                 fontSize: 20,
                 color: Color(0xffdddddd),
               ),
-            ),
+            ).tr(),
           ),
         )
       else
@@ -220,14 +222,14 @@ class _NoteScreenState extends State<NoteScreen> {
           child: const Text(
             'Undo',
             style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
-          ),
+          ).tr(),
         ),
       popMenuItems(),
     ];
 
     List<Widget> actionsSwapSaveAndUndoButtonReversed = <Widget>[
       if (_contentController.text.isEmpty)
-        const Padding(
+        Padding(
           padding: EdgeInsets.all(8.0),
           child: Align(
             alignment: Alignment.center,
@@ -237,7 +239,7 @@ class _NoteScreenState extends State<NoteScreen> {
                 fontSize: 20,
                 color: Color(0xffdddddd),
               ),
-            ),
+            ).tr(),
           ),
         )
       else
@@ -259,7 +261,7 @@ class _NoteScreenState extends State<NoteScreen> {
           child: const Text(
             'Undo',
             style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
-          ),
+          ).tr(),
         ),
       TextButton(
         onPressed: () {
@@ -272,14 +274,14 @@ class _NoteScreenState extends State<NoteScreen> {
         child: const Text(
           'Save',
           style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
-        ),
+        ).tr(),
       ),
       popMenuItems(),
     ];
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Notepad"),
-        backgroundColor: const Color(0xff907854),
+        title: const Text("Notepad").tr(),
+        backgroundColor: MyColor.appBarColor,
         leading: IconButton(
             onPressed: () {
               if (_droppingData && !_automaticallySaved) {
@@ -314,8 +316,9 @@ class _NoteScreenState extends State<NoteScreen> {
                   maxLines: 1,
                   onChanged: (value) {
                     if (_automaticallySaved) {
-                      id = notesList[notesList.length - 1].id!;
-                      _saveNote(id, false);
+                      if (id != -1) {
+                        _saveNote(id, false);
+                      }
                     }
                   },
                   enableInteractiveSelection: _enableEditMode,
@@ -333,8 +336,8 @@ class _NoteScreenState extends State<NoteScreen> {
                       }
                     }
                   },
-                  decoration: const InputDecoration(
-                    hintText: 'Enter title...',
+                  decoration: InputDecoration(
+                    hintText: 'Enter title...'.tr(),
                     hintStyle: TextStyle(fontSize: 18, color: Colors.grey),
                   ),
                   onFieldSubmitted: (_) {
@@ -385,8 +388,9 @@ class _NoteScreenState extends State<NoteScreen> {
                           }
 
                           if (_automaticallySaved) {
-                            id = notesList[notesList.length - 1].id!;
-                            _saveNote(id, false);
+                            if (id != -1) {
+                              _saveNote(id, false);
+                            }
                           }
                         },
                         autofocus: _titleController.text != ""
@@ -396,8 +400,8 @@ class _NoteScreenState extends State<NoteScreen> {
                         controller: _contentController,
                         style: TextStyle(
                             height: _drawLines ? 1.41 : 1, fontSize: 18),
-                        decoration: const InputDecoration(
-                          hintText: 'Enter text...',
+                        decoration: InputDecoration(
+                          hintText: 'Enter text...'.tr(),
                           hintStyle:
                               TextStyle(fontSize: 18, color: Colors.grey),
                         ),
@@ -439,24 +443,23 @@ class _NoteScreenState extends State<NoteScreen> {
       itemBuilder: (BuildContext bc) => <PopupMenuEntry<int>>[
         PopupMenuItem<int>(
             enabled: _enableUndoAllAndRedo,
-            child: const Text("Redo"),
+            child: const Text("Redo").tr(),
             value: 0),
         const PopupMenuDivider(),
         PopupMenuItem<int>(
             enabled: _enableUndoAllAndRedo,
-            child: const Text("Undo all"),
+            child: const Text("Undo all").tr(),
             value: 1),
         const PopupMenuDivider(),
         PopupMenuItem<int>(child: NestedPopupMenuItem(), value: null),
         const PopupMenuDivider(),
-        const PopupMenuItem<int>(child: Text("Delete"), value: 3),
+        PopupMenuItem<int>(child: Text("Delete").tr(), value: 3),
         const PopupMenuDivider(),
-        const PopupMenuItem<int>(
-            child: Text("Export to a text file"), value: 4),
+        PopupMenuItem<int>(child: Text("Export to a text file").tr(), value: 4),
         const PopupMenuDivider(),
-        const PopupMenuItem<int>(child: Text("Categories"), value: 5),
+        PopupMenuItem<int>(child: Text("Categories").tr(), value: 5),
         const PopupMenuDivider(),
-        const PopupMenuItem<int>(child: Text("Switch to read mode"), value: 6),
+        PopupMenuItem<int>(child: Text("Switch to read mode").tr(), value: 6),
         const PopupMenuDivider(),
       ],
       onSelected: (int value) async {
@@ -476,7 +479,7 @@ class _NoteScreenState extends State<NoteScreen> {
           case 4:
             await FileHelper.files.writeInFile(
                 _titleController.text == ""
-                    ? "Untitled"
+                    ? "Untitled".tr()
                     : _titleController.text,
                 _titleController.text + "::" + _contentController.text);
             ToastHelper.flutterToast("The file was exported");
@@ -511,26 +514,26 @@ class _NoteScreenState extends State<NoteScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Text>[
               Text(
-                  "The '${_titleController.text == "" ? "Untitled" : _titleController.text}' note will be deleted. Are you sure?"),
+                  "${"The".tr()} '${_titleController.text == "" ? "Untitled".tr() : _titleController.text}' ${"note will be deleted. Are you sure?".tr()}"),
             ],
           ),
           actions: <TextButton>[
             TextButton(
-              child: const Text(
+              child: Text(
                 'CANCEL',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text(
+              child: Text(
                 'OK',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 if (id != -1) {
                   Note dn = Note(
@@ -590,7 +593,7 @@ class _NoteScreenState extends State<NoteScreen> {
         List<bool> isCheck = <bool>[];
         isCheck = List<bool>.filled(categoryList.length, false);
         return AlertDialog(
-          title: const Text('Select category'),
+          title: const Text('Select category').tr(),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return !_finishGetDataCategories
@@ -614,7 +617,7 @@ class _NoteScreenState extends State<NoteScreen> {
                                         title: Text("${e.nameCat}"),
                                         dense: true,
                                       ),
-                                      const Divider(color: MyColor.textColor)
+                                      Divider(color: MyColor.textColor)
                                     ],
                                   ),
                                 );
@@ -628,21 +631,21 @@ class _NoteScreenState extends State<NoteScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text(
+              child: Text(
                 'Cancel',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text(
+              child: Text(
                 'OK',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 for (int i = 0; i < isCheck.length; i++) {
                   if (isCheck[i]) {
@@ -670,14 +673,14 @@ class _NoteScreenState extends State<NoteScreen> {
       builder: (BuildContext context) {
         bool val = false;
         return AlertDialog(
-          title: const Text('Do you want to drop the unsaved changes?'),
+          title: const Text('Do you want to drop the unsaved changes?').tr(),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CheckboxListTile(
-                    title: Text("Do not ask again"),
+                    title: Text("Do not ask again").tr(),
                     value: val,
                     onChanged: (bool? value) {
                       val = value!;
@@ -690,21 +693,21 @@ class _NoteScreenState extends State<NoteScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text(
+              child: Text(
                 'Cancel',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text(
+              child: Text(
                 'OK',
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ),
+              ).tr(),
               onPressed: () async {
                 if (val) {
                   await SharedPreferenceHelper.sharedPreference
