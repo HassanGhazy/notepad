@@ -50,7 +50,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
             maxLines: 1,
             decoration: InputDecoration(
               hintText: 'edit category name'.tr(),
-              hintStyle: TextStyle(fontSize: 18, color: Colors.grey),
+              hintStyle: TextStyle(fontSize: 18),
             ),
             onFieldSubmitted: (_) {
               FocusScope.of(context).requestFocus(FocusNode());
@@ -88,21 +88,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
               "${"Delete category".tr()} '${e.nameCat}'? ${"Notes from the category won't be deleted".tr()}"),
           actions: <TextButton>[
             TextButton(
-              child: Text(
-                'CANCEL',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
+              child: Text('CANCEL').tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text(
-                'OK',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
+              child: Text('OK').tr(),
               onPressed: () {
                 final int index = categoryList.indexOf(e);
                 categoryList.removeAt(index);
@@ -132,9 +124,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Categories").tr(),
-        backgroundColor: const Color(0xff907854),
       ),
-      backgroundColor: const Color(0xffFDFCCE),
       drawer: MyDrawer(),
       body: Column(
         children: <Widget>[
@@ -152,8 +142,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         maxLines: 1,
                         decoration: InputDecoration(
                           hintText: 'New category name'.tr(),
-                          hintStyle:
-                              TextStyle(fontSize: 18, color: Colors.grey),
+                          hintStyle: TextStyle(fontSize: 18),
                         ),
                         onFieldSubmitted: (_) {
                           FocusScope.of(context).requestFocus(FocusNode());
@@ -178,47 +167,55 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         },
                       ),
                     ),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10),
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(25),
+                    GestureDetector(
+                      onTap: () async {
+                        final bool isNotExist = categoryList.every(
+                            (Category element) =>
+                                element.nameCat !=
+                                _titleCategoryController.text);
+                        if (_titleCategoryController.text.isNotEmpty &&
+                            isNotExist) {
+                          final Category category =
+                              Category(nameCat: _titleCategoryController.text);
+                          DBHelper.dbhelper.createCategory(category);
+                          _titleCategoryController.clear();
+                          categoryList.add(category);
+                          // categoryProvider.addNewCategory(category);
+                          setState(() {});
+                        } else {
+                          _titleCategoryController.clear();
+                        }
+                      },
+                      child: Container(
+                        width: 80,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(25),
+                          ),
+                          border: Border.all(),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: <Color>[
+                              MyColor.linear1WithoutSelected,
+                              MyColor.linear1WithoutSelected,
+                            ],
+                          ),
                         ),
-                        border: Border.all(color: const Color(0xff999999)),
-                        gradient: const LinearGradient(
-                          colors: <Color>[Color(0xffFAFAC6), Color(0xffFAF4B6)],
+                        child: Center(
+                          child: const Text(
+                            'Add',
+                            style: TextStyle(
+                                // color: Colors.black
+                                fontSize: 18),
+                          ).tr(),
                         ),
                       ),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          final bool isNotExist = categoryList.every(
-                              (Category element) =>
-                                  element.nameCat !=
-                                  _titleCategoryController.text);
-                          if (_titleCategoryController.text.isNotEmpty &&
-                              isNotExist) {
-                            final Category category = Category(
-                                nameCat: _titleCategoryController.text);
-                            DBHelper.dbhelper.createCategory(category);
-                            _titleCategoryController.clear();
-                            categoryList.add(category);
-                            // categoryProvider.addNewCategory(category);
-                            setState(() {});
-                          } else {
-                            _titleCategoryController.clear();
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.transparent,
-                            shadowColor: Colors.transparent),
-                        child: const Text(
-                          'Add',
-                          style: TextStyle(color: Colors.black),
-                        ).tr(),
-                      ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -241,7 +238,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   onPressed: () async => await _showMyDialog(e),
                                   icon: const Icon(
                                     Icons.edit,
-                                    color: Colors.black,
+                                    // color: Colors.black,
                                   ),
                                 ),
                                 IconButton(
@@ -250,7 +247,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   },
                                   icon: const Icon(
                                     Icons.delete,
-                                    color: Colors.black,
+                                    // color: Colors.black,
                                   ),
                                 )
                               ],

@@ -17,4 +17,8 @@ class AppRouter {
   void replacmentRouteWithArgs(String routeName, Object args) {
     navKey.currentState!.pushReplacementNamed(routeName, arguments: args);
   }
+
+  void back() {
+    navKey.currentState!.pop();
+  }
 }

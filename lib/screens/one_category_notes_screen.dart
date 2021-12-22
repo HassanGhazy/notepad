@@ -68,13 +68,13 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
         onPressed: () {
           AppRouter.route.replacmentRoute('/add-note');
         },
-        backgroundColor: const Color(0xff796A41),
+        // backgroundColor: const Color(0xff796A41),
         child: const Icon(
           Icons.add,
         ),
       ),
       appBar: AppBar(
-        backgroundColor: MyColor.appBarColor,
+        // backgroundColor: MyColor.appBarColor,
         actions: selectedIsRunning
             ? <Widget>[
                 IconButton(
@@ -88,7 +88,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                   },
                   icon: const Icon(
                     Icons.select_all,
-                    color: Color(0xffffffff),
+                    // color: Color(0xffffffff),
                     size: 25,
                   ),
                 ),
@@ -99,7 +99,7 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                   tooltip: 'Delete'.tr(),
                   icon: const Icon(
                     Icons.delete,
-                    color: Color(0xffffffff),
+                    // color: Color(0xffffffff),
                     size: 25,
                   ),
                 ),
@@ -128,12 +128,12 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                     icon: const Icon(
                       Icons.menu,
                       size: 25,
-                      color: Color(0xffffffff),
+                      // color: Color(0xffffffff),
                     )),
               ),
       ),
       drawer: selectedIsRunning ? null : MyDrawer(),
-      backgroundColor: MyColor.backgroundScaffold,
+      // backgroundColor: MyColor.backgroundScaffold,
       body: SingleChildScrollView(
         child: Column(
           children: notesList
@@ -142,22 +142,22 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                 while (notesList.length > selectedNote.length) {
                   selectedNote.insert(0, false);
                 }
-                final List<String> categoryNumber = e.cat!.split(',');
+                // final List<String> categoryNumber = e.cat!.split(',');
                 String categorySplittedString = "";
-                categoryNumber.removeWhere((String element) => element == "");
-                if (categoryNumber.length > 1) {
-                  categorySplittedString =
-                      categoryNumber[0] + "," + categoryNumber[1];
-                  categorySplittedString += (categoryNumber.length - 3 >= 0)
-                      ? (categorySplittedString.length > 30)
-                          ? categorySplittedString.substring(0, 28) +
-                              "..." +
-                              "(+${categoryNumber.length - 2})"
-                          : "(+${categoryNumber.length - 2})"
-                      : "";
-                } else {
-                  categorySplittedString = e.cat!;
-                }
+                // categoryNumber.removeWhere((String element) => element == "");
+                // if (categoryNumber.length > 1) {
+                //   categorySplittedString =
+                //       categoryNumber[0] + "," + categoryNumber[1];
+                //   categorySplittedString += (categoryNumber.length - 3 >= 0)
+                //       ? (categorySplittedString.length > 30)
+                //           ? categorySplittedString.substring(0, 28) +
+                //               "..." +
+                //               "(+${categoryNumber.length - 2})"
+                //           : "(+${categoryNumber.length - 2})"
+                //       : "";
+                // } else {
+                //   categorySplittedString = e.cat!;
+                // }
 
                 return MapEntry<int, Card>(
                   i,
@@ -172,8 +172,22 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                           color: Colors.black,
                         ),
                         gradient: selectedNote[i]
-                            ? MyColor.containerColorWithSelected
-                            : MyColor.containerColorWithoutSelected,
+                            ? LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: <Color>[
+                                  MyColor.linear1Selected,
+                                  MyColor.linear2Selected,
+                                ],
+                              )
+                            : LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: <Color>[
+                                  MyColor.linear1WithoutSelected,
+                                  MyColor.linear1WithoutSelected,
+                                ],
+                              ),
                       ),
                       child: ListTile(
                         title: Text(
@@ -184,7 +198,8 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                             Text(
                               "$categorySplittedString",
                               style: const TextStyle(
-                                  color: Color(0xff000000), fontSize: 13),
+                                  // color: Color(0xff000000) ,
+                                  fontSize: 13),
                               textAlign: TextAlign.center,
                             ),
                             Padding(
@@ -207,8 +222,6 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                             }
                             setState(() {});
                           } else {
-                            print(e.dateCreation);
-                            print(e.dateEdition);
                             AppRouter.route
                                 .pushNamed('/add-note', <String, dynamic>{
                               'id': '${e.id}',
@@ -324,7 +337,9 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
                                         title: Text("${e.nameCat}"),
                                         dense: true,
                                       ),
-                                      Divider(color: MyColor.textColor)
+                                      Divider(
+                                          // color: MyColor.textColor
+                                          )
                                     ],
                                   ),
                                 );
@@ -340,8 +355,8 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
             TextButton(
               child: Text(
                 'Cancel',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+                // style: TextStyle(
+                //     fontWeight: FontWeight.bold, color: MyColor.textColor),
               ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -350,35 +365,35 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
             TextButton(
               child: Text(
                 'OK',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+                // style: TextStyle(
+                //     fontWeight: FontWeight.bold, color: MyColor.textColor),
               ).tr(),
               onPressed: () {
-                for (int i = 0; i < isCheck.length; i++) {
-                  if (isCheck[i]) {
-                    for (int j = 0; j < selectedNote.length; j++) {
-                      if (selectedNote[j]) {
-                        if (!notesList[j]
-                            .cat!
-                            .contains(categoryList[i].nameCat!)) {
-                          notesList[j].cat = notesList[j].cat! +
-                              categoryList[i].nameCat! +
-                              ", ";
-                        }
-                      }
-                    }
-                  }
-                }
+                // for (int i = 0; i < isCheck.length; i++) {
+                //   if (isCheck[i]) {
+                //     for (int j = 0; j < selectedNote.length; j++) {
+                //       if (selectedNote[j]) {
+                //         if (!notesList[j]
+                //             .cat!
+                //             .contains(categoryList[i].nameCat!)) {
+                //           notesList[j].cat = notesList[j].cat! +
+                //               categoryList[i].nameCat! +
+                //               ", ";
+                //         }
+                //       }
+                //     }
+                //   }
+                // }
 
-                for (int i = 0; i < notesList.length; i++) {
-                  if (selectedNote[i]) {
-                    notesList[i].cat = notesList[i]
-                        .cat!
-                        .trimRight()
-                        .substring(0, notesList[i].cat!.length - 1);
-                    DBHelper.dbhelper.updateNote(notesList[i]);
-                  }
-                }
+                // for (int i = 0; i < notesList.length; i++) {
+                //   if (selectedNote[i]) {
+                //     notesList[i].cat = notesList[i]
+                //         .cat!
+                //         .trimRight()
+                //         .substring(0, notesList[i].cat!.length - 1);
+                //     DBHelper.dbhelper.updateNote(notesList[i]);
+                //   }
+                // }
                 setState(() {});
                 Navigator.of(context).pop();
               },
@@ -400,8 +415,8 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
             TextButton(
               child: Text(
                 'CANCEL',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+                // style: TextStyle(
+                //     fontWeight: FontWeight.bold, color: MyColor.textColor),
               ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -410,8 +425,8 @@ class _OneCategoryNotesScreenState extends State<OneCategoryNotesScreen> {
             TextButton(
               child: Text(
                 'OK',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+                // style: TextStyle(
+                //     fontWeight: FontWeight.bold, color: MyColor.textColor),
               ),
               onPressed: () {
                 final int length = selectedNote.length;

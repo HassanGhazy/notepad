@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:notepad/widgets/back_text_button.dart';
 import '../helper/file_helper.dart';
-import '../helper/mycolor.dart';
 import '../helper/shared_preference_helper.dart';
 import '../helper/toast_helper.dart';
 import '../models/Category.dart';
-
 import '../widgets/nestedPopupMenuItem.dart';
 import '../helper/app_router.dart';
 import '../helper/db_helper.dart';
@@ -126,11 +125,9 @@ class _NoteScreenState extends State<NoteScreen> {
         cat: cat,
       );
       DBHelper.dbhelper.createNote(note);
-
+      AppRouter.route.replacmentRoute('/home');
       if (showToast) ToastHelper.flutterToast("The note was saved");
     }
-
-    // AppRouter.route.replacmentRoute('/home');
   }
 
   Map<String?, dynamic> data = <String?, dynamic>{};
@@ -186,7 +183,7 @@ class _NoteScreenState extends State<NoteScreen> {
         },
         child: const Text(
           'Save',
-          style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
+          style: TextStyle(fontSize: 20, color: Color(0xff888888)),
         ).tr(),
       ),
       if (_contentController.text.isEmpty)
@@ -196,10 +193,7 @@ class _NoteScreenState extends State<NoteScreen> {
             alignment: Alignment.center,
             child: Text(
               'Undo',
-              style: TextStyle(
-                fontSize: 20,
-                color: Color(0xffdddddd),
-              ),
+              style: TextStyle(fontSize: 20, color: Color(0xff888888)),
             ).tr(),
           ),
         )
@@ -221,7 +215,7 @@ class _NoteScreenState extends State<NoteScreen> {
           },
           child: const Text(
             'Undo',
-            style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
+            style: TextStyle(fontSize: 20, color: Color(0xff888888)),
           ).tr(),
         ),
       popMenuItems(),
@@ -235,10 +229,7 @@ class _NoteScreenState extends State<NoteScreen> {
             alignment: Alignment.center,
             child: Text(
               'Undo',
-              style: TextStyle(
-                fontSize: 20,
-                color: Color(0xffdddddd),
-              ),
+              style: TextStyle(fontSize: 20, color: Color(0xff888888)),
             ).tr(),
           ),
         )
@@ -260,7 +251,7 @@ class _NoteScreenState extends State<NoteScreen> {
           },
           child: const Text(
             'Undo',
-            style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
+            style: TextStyle(fontSize: 20, color: Color(0xff888888)),
           ).tr(),
         ),
       TextButton(
@@ -273,7 +264,7 @@ class _NoteScreenState extends State<NoteScreen> {
         },
         child: const Text(
           'Save',
-          style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
+          style: TextStyle(fontSize: 20, color: Color(0xff888888)),
         ).tr(),
       ),
       popMenuItems(),
@@ -281,7 +272,6 @@ class _NoteScreenState extends State<NoteScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Notepad").tr(),
-        backgroundColor: MyColor.appBarColor,
         leading: IconButton(
             onPressed: () {
               if (_droppingData && !_automaticallySaved) {
@@ -295,10 +285,9 @@ class _NoteScreenState extends State<NoteScreen> {
             ? actionsSwapSaveAndUndoButton
             : actionsSwapSaveAndUndoButtonReversed,
       ),
-      backgroundColor: const Color(0xffFDFCCE),
       body: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.black38),
+          border: Border.all(),
           borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         ),
@@ -338,7 +327,7 @@ class _NoteScreenState extends State<NoteScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Enter title...'.tr(),
-                    hintStyle: TextStyle(fontSize: 18, color: Colors.grey),
+                    hintStyle: TextStyle(fontSize: 18),
                   ),
                   onFieldSubmitted: (_) {
                     FocusScope.of(context).requestFocus(_contentFocusNode);
@@ -402,8 +391,7 @@ class _NoteScreenState extends State<NoteScreen> {
                             height: _drawLines ? 1.41 : 1, fontSize: 18),
                         decoration: InputDecoration(
                           hintText: 'Enter text...'.tr(),
-                          hintStyle:
-                              TextStyle(fontSize: 18, color: Colors.grey),
+                          hintStyle: TextStyle(fontSize: 18),
                         ),
                       ),
                     ],
@@ -519,21 +507,13 @@ class _NoteScreenState extends State<NoteScreen> {
           ),
           actions: <TextButton>[
             TextButton(
-              child: Text(
-                'CANCEL',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
+              child: Text('CANCEL').tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text(
-                'OK',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
+              child: Text('OK').tr(),
               onPressed: () {
                 if (id != -1) {
                   Note dn = Note(
@@ -617,7 +597,7 @@ class _NoteScreenState extends State<NoteScreen> {
                                         title: Text("${e.nameCat}"),
                                         dense: true,
                                       ),
-                                      Divider(color: MyColor.textColor)
+                                      const Divider()
                                     ],
                                   ),
                                 );
@@ -630,32 +610,19 @@ class _NoteScreenState extends State<NoteScreen> {
             },
           ),
           actions: <Widget>[
+            BackTextButton(),
             TextButton(
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
+              child: Text('OK').tr(),
               onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(
-                'OK',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
-              onPressed: () {
-                for (int i = 0; i < isCheck.length; i++) {
-                  if (isCheck[i]) {
-                    if (!cat.contains(categoryList[i].nameCat!)) {
-                      cat += categoryList[i].nameCat! + ", ";
-                    }
-                  }
-                }
+                // for (int i = 0; i < isCheck.length; i++) {
+                //   if (isCheck[i]) {
+                //     if (!cat.contains(categoryList[i].nameCat!)) {
+                //       cat += categoryList[i].nameCat! + ", ";
+                //     }
+                //   }
+                // }
 
-                cat = cat.trimRight().substring(0, cat.length - 1);
+                // cat = cat.trimRight().substring(0, cat.length - 1);
                 setState(() {});
                 Navigator.of(context).pop();
               },
@@ -693,21 +660,13 @@ class _NoteScreenState extends State<NoteScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
+              child: Text('Cancel').tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text(
-                'OK',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
+              child: Text('OK').tr(),
               onPressed: () async {
                 if (val) {
                   await SharedPreferenceHelper.sharedPreference

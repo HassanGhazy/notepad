@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:in_app_review/in_app_review.dart';
 import '../widgets/my_list_tile.dart';
 import '../helper/luncher_helper.dart';
 import '../helper/app_router.dart';
@@ -17,6 +18,7 @@ class MyDrawer extends StatefulWidget {
 class _MyDrawerState extends State<MyDrawer> {
   List<Category> categoryList = <Category>[];
   bool _finishGetData = false;
+  final InAppReview inAppReview = InAppReview.instance;
 
   @override
   void initState() {
@@ -54,9 +56,10 @@ class _MyDrawerState extends State<MyDrawer> {
                   child: Text(
                     "NotePad",
                     style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: MyColor.textappBarColor),
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      // color: MyColor.textappBarColor
+                    ),
                   ).tr(),
                 ),
                 color: MyColor.topDrawer,
@@ -74,7 +77,7 @@ class _MyDrawerState extends State<MyDrawer> {
                 },
               ),
               const Divider(
-                color: MyColor.middleLineDrawer,
+                // color: MyColor.middleLineDrawer,
                 thickness: 2,
               ),
               Padding(
@@ -110,13 +113,25 @@ class _MyDrawerState extends State<MyDrawer> {
               ),
               MyListTile(
                   "Edit Categories".tr(), Icons.playlist_add, '/add-categorie'),
-              const Divider(color: MyColor.middleLineDrawer, thickness: 2),
+              const Divider(
+                  // color:
+                  // MyColor.middleLineDrawer,
+                  thickness: 2),
               MyListTile("Backup".tr(), Icons.storage, '/backup'),
               MyListTile("Trash".tr(), Icons.delete, '/trash'),
-              const Divider(color: MyColor.middleLineDrawer, thickness: 2),
+              const Divider(
+                  // color: MyColor.middleLineDrawer,
+                  thickness: 2),
               MyListTile("Setting".tr(), Icons.settings, '/setting'),
-              MyListTile(
-                  "Rate The App".tr(), Icons.rate_review, '/'), // check route
+              ListTile(
+                title: MyText("Rate The App".tr()),
+                leading: const Icon(Icons.rate_review),
+                onTap: () async {
+                  await inAppReview.openStoreListing(
+                      appStoreId: 'com.hassanGhazy.notepad',
+                      microsoftStoreId: 'com.hassanGhazy.notepad');
+                },
+              ),
               ListTile(
                 title: MyText("Help".tr()),
                 leading: const Icon(Icons.help),

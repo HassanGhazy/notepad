@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:notepad/helper/app_router.dart';
+import 'package:notepad/helper/mycolor.dart';
+import 'package:notepad/helper/theme_helper.dart';
+import 'package:notepad/provider/provider_note.dart';
+import 'package:provider/provider.dart';
 import '../helper/luncher_helper.dart';
-import '../helper/mycolor.dart';
+// import '../helper/mycolor.dart';
 import '../helper/shared_preference_helper.dart';
 import '../widgets/my_drawer.dart';
 import 'package:wakelock/wakelock.dart';
@@ -79,7 +84,7 @@ class _SettingState extends State<Setting> {
         subtitle:
             const Text("Opens the last chosen category on app start").tr(),
         trailing: Switch(
-            activeColor: MyColor.switchColor,
+            // activeColor: MyColor.switchColor,
             value: _openTheLastCategory,
             onChanged: (bool value) async {
               _openTheLastCategory = value;
@@ -98,7 +103,7 @@ class _SettingState extends State<Setting> {
         title: const Text("Show note categories").tr(),
         subtitle: const Text("Show categories for each note on the list").tr(),
         trailing: Switch(
-            activeColor: MyColor.switchColor,
+            // activeColor: MyColor.switchColor,
             value: _showNoteCategory,
             onChanged: (bool value) async {
               _showNoteCategory = value;
@@ -151,7 +156,7 @@ class _SettingState extends State<Setting> {
             const Text("Deleted notes will be stored in the 'Trash' folder")
                 .tr(),
         trailing: Switch(
-            activeColor: MyColor.switchColor,
+            // activeColor: MyColor.switchColor,
             value: _moveDeletedToTrash,
             onChanged: (bool value) async {
               _moveDeletedToTrash = value;
@@ -182,7 +187,7 @@ class _SettingState extends State<Setting> {
         subtitle:
             const Text("show keyboard after entering the note screen").tr(),
         trailing: Switch(
-            activeColor: MyColor.switchColor,
+            // activeColor: MyColor.switchColor,
             value: _showNoteKeyboard,
             onChanged: (bool value) async {
               _showNoteKeyboard = value;
@@ -216,7 +221,7 @@ class _SettingState extends State<Setting> {
         subtitle:
             const Text('Switches the "Save" and "Undo" buttons placement').tr(),
         trailing: Switch(
-            activeColor: MyColor.switchColor,
+            // activeColor: MyColor.switchColor,
             value: _swapSaveAndUndoButton,
             onChanged: (bool value) async {
               _swapSaveAndUndoButton = value;
@@ -237,7 +242,7 @@ class _SettingState extends State<Setting> {
                 'Changes in notes are saved automatically.\nDisabling it may cause losing unsaved parts of notes')
             .tr(),
         trailing: Switch(
-            activeColor: MyColor.switchColor,
+            // activeColor: MyColor.switchColor,
             value: _automaticallySaved,
             onChanged: (bool value) async {
               _automaticallySaved = value;
@@ -259,7 +264,7 @@ class _SettingState extends State<Setting> {
                 'Asks for confirming before closing a note with unsaved changes')
             .tr(),
         trailing: Switch(
-            activeColor: MyColor.switchColor,
+            // activeColor: MyColor.switchColor,
             value: _droppingData,
             onChanged: _automaticallySaved
                 ? null
@@ -281,7 +286,7 @@ class _SettingState extends State<Setting> {
         title: const Text('Open notes in read mode').tr(),
         subtitle: const Text('Open notes in read mode by default').tr(),
         trailing: Switch(
-            activeColor: MyColor.switchColor,
+            // activeColor: MyColor.switchColor,
             value: _readMode,
             onChanged: (bool value) async {
               _readMode = value;
@@ -300,7 +305,7 @@ class _SettingState extends State<Setting> {
         title: const Text('Keep screen on').tr(),
         subtitle: const Text('keep the screen from turning off').tr(),
         trailing: Switch(
-            activeColor: MyColor.switchColor,
+            // activeColor: MyColor.switchColor,
             value: _keepScreenOn,
             onChanged: (bool value) async {
               _keepScreenOn = value;
@@ -329,7 +334,7 @@ class _SettingState extends State<Setting> {
         title: const Text('Draw lines in background').tr(),
         subtitle: const Text('Draw lines behind text in the background').tr(),
         trailing: Switch(
-            activeColor: MyColor.switchColor,
+            // activeColor: MyColor.switchColor,
             value: _drawLines,
             onChanged: (bool value) async {
               _drawLines = value;
@@ -347,7 +352,7 @@ class _SettingState extends State<Setting> {
       ),
     ];
     return Scaffold(
-      backgroundColor: MyColor.backgroundScaffold,
+      // backgroundColor: MyColor.backgroundScaffold,
       appBar: AppBar(
         leading: Builder(
           builder: (BuildContext context) => IconButton(
@@ -358,21 +363,21 @@ class _SettingState extends State<Setting> {
               icon: Icon(
                 Icons.menu,
                 size: 25,
-                color: MyColor.textappBarColor,
+                // color: MyColor.textappBarColor,
               )),
         ),
         title: _showNotelistScreen
-            ? Text("Note list",
-                    style: TextStyle(color: MyColor.textappBarColor))
-                .tr()
+            ? Text("Note list").tr()
             : _showEditlistScreen
-                ? Text("Note editing",
-                        style: TextStyle(color: MyColor.textappBarColor))
-                    .tr()
-                : Text("Setting",
-                        style: TextStyle(color: MyColor.textappBarColor))
-                    .tr(),
-        backgroundColor: MyColor.appBarColor,
+                ? Text(
+                    "Note editing",
+                    // style: TextStyle(color: MyColor.textappBarColor)
+                  ).tr()
+                : Text(
+                    "Setting",
+                    // style: TextStyle(color: MyColor.textappBarColor)
+                  ).tr(),
+        // backgroundColor: MyColor.appBarColor,
       ),
       drawer: MyDrawer(),
       body: SingleChildScrollView(
@@ -411,7 +416,7 @@ class _SettingState extends State<Setting> {
                         setState(() {});
                       },
                       leading: Radio<int>(
-                        activeColor: MyColor.switchColor,
+                        // activeColor: MyColor.switchColor,
                         value: 1,
                         groupValue: val == 0 ? _cursorPosition : _language,
                         onChanged: (int? value) {
@@ -435,7 +440,7 @@ class _SettingState extends State<Setting> {
                         setState(() {});
                       },
                       leading: Radio<int>(
-                        activeColor: MyColor.switchColor,
+                        // activeColor: MyColor.switchColor,
                         value: 0,
                         groupValue: val == 0 ? _cursorPosition : _language,
                         onChanged: (int? value) {
@@ -455,8 +460,8 @@ class _SettingState extends State<Setting> {
             TextButton(
               child: Text(
                 'Cancel',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+                // style: TextStyle(
+                //     fontWeight: FontWeight.bold, color: MyColor.textColor),
               ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -465,8 +470,8 @@ class _SettingState extends State<Setting> {
             TextButton(
               child: Text(
                 'OK',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+                // style: TextStyle(
+                //     fontWeight: FontWeight.bold, color: MyColor.textColor),
               ).tr(),
               onPressed: () async {
                 if (val == 0) {
@@ -496,7 +501,10 @@ class _SettingState extends State<Setting> {
       context: context,
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
-        int val = 5;
+        String valString =
+            SharedPreferenceHelper.sharedPreference.getStringData('theme') ??
+                "1";
+        int val = int.parse(valString);
         return AlertDialog(
           title: Text('Theme').tr(),
           content: StatefulBuilder(
@@ -506,9 +514,11 @@ class _SettingState extends State<Setting> {
                   children: <ListTile>[
                     ListTile(
                       title: Text('Light'),
-                      // onTap: () {},
+                      onTap: () {
+                        val = 0;
+                        setState(() {});
+                      },
                       leading: Radio<int>(
-                        activeColor: MyColor.switchColor,
                         value: 0,
                         groupValue: val,
                         onChanged: (int? value) {
@@ -518,10 +528,12 @@ class _SettingState extends State<Setting> {
                       ),
                     ),
                     ListTile(
-                      title: Text('Solarized'),
-                      // onTap: () {},
+                      title: Text('Dark'),
+                      onTap: () {
+                        val = 1;
+                        setState(() {});
+                      },
                       leading: Radio<int>(
-                        activeColor: MyColor.switchColor,
                         value: 1,
                         groupValue: val,
                         onChanged: (int? value) {
@@ -531,50 +543,13 @@ class _SettingState extends State<Setting> {
                       ),
                     ),
                     ListTile(
-                      title: Text('White'),
-                      // onTap: () {},
-                      leading: Radio<int>(
-                        activeColor: MyColor.switchColor,
-                        value: 2,
-                        groupValue: val,
-                        onChanged: (int? value) {
-                          val = value!;
-                          setState(() {});
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      title: Text('Solarized Dark'),
-                      // onTap: () {},
-                      leading: Radio<int>(
-                        activeColor: MyColor.switchColor,
-                        value: 3,
-                        groupValue: val,
-                        onChanged: (int? value) {
-                          val = value!;
-                          setState(() {});
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      title: Text('Dark'),
-                      // onTap: () {},
-                      leading: Radio<int>(
-                        activeColor: MyColor.switchColor,
-                        value: 4,
-                        groupValue: val,
-                        onChanged: (int? value) {
-                          val = value!;
-                          setState(() {});
-                        },
-                      ),
-                    ),
-                    ListTile(
                       title: Text('System setting'),
-                      // onTap: () {},
+                      onTap: () {
+                        val = 2;
+                        setState(() {});
+                      },
                       leading: Radio<int>(
-                        activeColor: MyColor.switchColor,
-                        value: 5,
+                        value: 2,
                         groupValue: val,
                         onChanged: (int? value) {
                           val = value!;
@@ -587,11 +562,7 @@ class _SettingState extends State<Setting> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
+              child: Text('Cancel').tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -599,25 +570,35 @@ class _SettingState extends State<Setting> {
             TextButton(
               child: Text(
                 'OK',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+                // style: TextStyle(
+                //     fontWeight: FontWeight.bold, color: MyColor.textColor),
               ).tr(),
-              onPressed: () async {
-                // await SharedPreferenceHelper.sharedPreference
-                //     .saveIntData("cursorPosition", _cursorPosition);
+              onPressed: () {
+                SharedPreferenceHelper.sharedPreference
+                    .saveStringData("theme", "$val");
                 switch (val) {
                   case 0:
-                    MyColor.colors.appBarColorSet(Color(0xffEFE8D5));
-                    MyColor.colors.backgroundScaffoldSet(Color(0xffFDF6E3));
-                    MyColor.colors.switchColorSet(Color(0xffB68505));
-                    MyColor.colors.textColorSet(Color(0xff7D7159));
-                    MyColor.colors.topDrawerSet(Color(0xffC39F2F));
-                    MyColor.colors.backgroundDrawerSet(Color(0xffFDF6E3));
-                    setState(() {});
+                    Provider.of<ProviderNote>(context, listen: false)
+                        .setTheme(ThemeHelper.lightTheme);
+                    MyColor.getColor();
                     break;
+                  case 1:
+                    Provider.of<ProviderNote>(context, listen: false)
+                        .setTheme(ThemeHelper.darkTheme);
+                    MyColor.getColor();
+                    break;
+                  case 2:
+                    Provider.of<ProviderNote>(context, listen: false)
+                        .setTheme(ThemeHelper.systemSetting);
+                    break;
+
                   default:
+                    Provider.of<ProviderNote>(context, listen: false)
+                        .setTheme(ThemeHelper.darkTheme);
                 }
-                Navigator.of(context).pop();
+                MyColor.getColor();
+
+                AppRouter.route.back();
               },
             ),
           ],

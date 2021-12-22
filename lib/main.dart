@@ -1,5 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:notepad/helper/theme_helper.dart';
+import 'package:notepad/provider/provider_note.dart';
+import 'package:provider/provider.dart';
 import '../helper/mycolor.dart';
 import '../screens/setting.dart';
 import '../helper/shared_preference_helper.dart';
@@ -19,13 +22,34 @@ Future<void> main() async {
   await EasyLocalization.ensureInitialized();
   int _language =
       SharedPreferenceHelper.sharedPreference.getIntData("language") ?? 1;
+  String handleTheme =
+      SharedPreferenceHelper.sharedPreference.getStringData("theme") ?? "1";
 
+  ThemeData? theme;
+  switch (handleTheme) {
+    case "0":
+      theme = ThemeHelper.lightTheme;
+      break;
+    case "1":
+      theme = ThemeHelper.darkTheme;
+
+      break;
+    case "2":
+      theme = ThemeHelper.systemSetting;
+
+      break;
+    default:
+      theme = ThemeHelper.darkTheme;
+  }
+  MyColor.getColor();
   runApp(
     EasyLocalization(
         supportedLocales: [Locale('en'), Locale('ar')],
         path: 'assets/translations',
         fallbackLocale: Locale('en'),
-        child: MyApp(_language)),
+        child: ChangeNotifierProvider.value(
+            value: ProviderNote(theme),
+            builder: (_, child) => MyApp(_language))),
   );
 }
 
@@ -34,11 +58,13 @@ class MyApp extends StatelessWidget {
   MyApp(this.local);
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ProviderNote>(context);
     return MaterialApp(
+      theme: themeNotifier.getTheme(),
       title: 'Notepad'.tr(),
       debugShowCheckedModeBanner: false,
       home: Home(),
-      color: MyColor.appBarColor,
+      // color: MyColor.appBarColor,
       navigatorKey: AppRouter.route.navKey,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: const <Locale>[Locale('en'), Locale('ar')],

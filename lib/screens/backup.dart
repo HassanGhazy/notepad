@@ -13,9 +13,9 @@ class BackUp extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Backup").tr(),
-        backgroundColor: MyColor.appBarColor,
+        // backgroundColor: MyColor.appBarColor,
       ),
-      backgroundColor: MyColor.backgroundScaffold,
+      // backgroundColor: MyColor.backgroundScaffold,
       drawer: MyDrawer(),
       body: Column(
         children: <Widget>[
@@ -26,9 +26,16 @@ class BackUp extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
                 border: Border.all(
-                  color: MyColor.appBarColor,
+                    // color: MyColor.appBarColor,
+                    ),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: <Color>[
+                    MyColor.linear1WithoutSelected,
+                    MyColor.linear1WithoutSelected,
+                  ],
                 ),
-                gradient: MyColor.containerColorWithoutSelected,
               ),
               child: Center(
                 child: MyText("SHOW INSTRUCTIONS".tr()),
@@ -40,7 +47,20 @@ class BackUp extends StatelessWidget {
             child: Container(
                 height: 280,
                 width: double.infinity,
-                decoration: MyColor.containerDercoration,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(
+                      // color: appBarColor,
+                      ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: <Color>[
+                      MyColor.linear1WithoutSelected,
+                      MyColor.linear1WithoutSelected,
+                    ],
+                  ),
+                ),
                 child: Column(
                   children: <Widget>[
                     Padding(
@@ -62,9 +82,16 @@ class BackUp extends StatelessWidget {
                           borderRadius:
                               const BorderRadius.all(Radius.circular(10)),
                           border: Border.all(
-                            color: MyColor.appBarColor,
+                              // color: MyColor.appBarColor,
+                              ),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: <Color>[
+                              MyColor.linear1WithoutSelected,
+                              MyColor.linear1WithoutSelected,
+                            ],
                           ),
-                          gradient: MyColor.containerColorWithoutSelected,
                         ),
                         child: Center(
                           child: MyText("SAVE A BACKUP TO A FILE".tr()),
@@ -83,9 +110,16 @@ class BackUp extends StatelessWidget {
                           borderRadius:
                               const BorderRadius.all(Radius.circular(10)),
                           border: Border.all(
-                            color: MyColor.appBarColor,
+                              // color: MyColor.appBarColor,
+                              ),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: <Color>[
+                              MyColor.linear1WithoutSelected,
+                              MyColor.linear1WithoutSelected,
+                            ],
                           ),
-                          gradient: MyColor.containerColorWithoutSelected,
                         ),
                         child: Center(
                           child: MyText("LOAD NOTES FROM A BACKUP FILE".tr()),

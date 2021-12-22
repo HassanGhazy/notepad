@@ -43,19 +43,15 @@ class _TrashScreenState extends State<TrashScreen> {
             TextButton(
               child: Text(
                 'CANCEL',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
+                // style: TextStyle(
+                //     fontWeight: FontWeight.bold, color: MyColor.textColor),
               ).tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text(
-                'OK',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
+              child: Text('OK').tr(),
               onPressed: () {
                 switch (val) {
                   case 0: // restore all the notes
@@ -74,7 +70,6 @@ class _TrashScreenState extends State<TrashScreen> {
                     final int length = selectedNote.length;
                     for (int i = length - 1; i >= 0; i--) {
                       if (selectedNote[i]) {
-                        print(deletedNotesList[i].toMap());
                         final Note note =
                             Note.fromMap(deletedNotesList[i].toMap());
                         DBHelper.dbhelper.createNote(note);
@@ -164,21 +159,13 @@ class _TrashScreenState extends State<TrashScreen> {
           }),
           actions: <TextButton>[
             TextButton(
-              child: Text(
-                'CANCEL',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
+              child: Text('CANCEL').tr(),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text(
-                'OK',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: MyColor.textColor),
-              ).tr(),
+              child: Text('OK').tr(),
               onPressed: () {
                 if (val == 1) {
                   // restore
@@ -203,8 +190,6 @@ class _TrashScreenState extends State<TrashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final listDeletedNotes =
-    //     Provider.of<NoteProvider>(context, listen: false).deletedNotes;
     if (!_finishGetData) {
       getDeletedNotesListData().whenComplete(() {
         if (mounted) {
@@ -217,7 +202,6 @@ class _TrashScreenState extends State<TrashScreen> {
     return Scaffold(
       appBar: AppBar(
         title: selectedIsRunning ? Text('$count') : const Text('Trash').tr(),
-        backgroundColor: MyColor.appBarColor,
         actions: selectedIsRunning
             ? <Widget>[
                 IconButton(
@@ -231,7 +215,7 @@ class _TrashScreenState extends State<TrashScreen> {
                   },
                   icon: const Icon(
                     Icons.select_all,
-                    color: Color(0xffffffff),
+                    // color: Color(0xffffffff),
                     size: 25,
                   ),
                 ),
@@ -242,7 +226,7 @@ class _TrashScreenState extends State<TrashScreen> {
                   tooltip: 'Undelete'.tr(),
                   icon: const Icon(
                     Icons.delete_sweep,
-                    color: Color(0xffffffff),
+                    // color: Color(0xffffffff),
                     size: 25,
                   ),
                 ),
@@ -270,12 +254,11 @@ class _TrashScreenState extends State<TrashScreen> {
                     icon: const Icon(
                       Icons.menu,
                       size: 25,
-                      color: Color(0xffffffff),
+                      // color: Color(0xffffffff),
                     )),
               ),
       ),
       drawer: MyDrawer(),
-      backgroundColor: MyColor.backgroundScaffold,
       body: !_finishGetData
           ? const Center(
               child: CircularProgressIndicator(),
@@ -299,11 +282,25 @@ class _TrashScreenState extends State<TrashScreen> {
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(10)),
                               border: Border.all(
-                                color: Colors.black,
-                              ),
+                                  // color: Colors.black,
+                                  ),
                               gradient: selectedNote[i]
-                                  ? MyColor.containerColorWithSelected
-                                  : MyColor.containerColorWithoutSelected,
+                                  ? LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: <Color>[
+                                        MyColor.linear1Selected,
+                                        MyColor.linear2Selected,
+                                      ],
+                                    )
+                                  : LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: <Color>[
+                                        MyColor.linear1WithoutSelected,
+                                        MyColor.linear1WithoutSelected,
+                                      ],
+                                    ),
                             ),
                             child: ListTile(
                               title: Text(
@@ -313,8 +310,8 @@ class _TrashScreenState extends State<TrashScreen> {
                                 children: <Widget>[
                                   Text(
                                     "${"Last edit:".tr()}${DateFormat("d/M/yy, hh:mm a").format(DateTime.parse(e.dateEdition!))}",
-                                    style: const TextStyle(
-                                        color: Color(0xff000000)),
+                                    // style: const TextStyle(
+                                    //     color: Color(0xff000000)),
                                   ),
                                 ],
                               ),
